@@ -1,0 +1,7 @@
+{
+  "name": "BabySeat",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
