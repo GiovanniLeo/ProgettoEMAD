@@ -1,59 +1,72 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-back-button defaultHref="/login" slot="start"></ion-back-button>
-    <ion-title>Registrazione</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-back-button defaultHref="/login" slot="start"></ion-back-button>
+        <ion-title>Registrazione</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-row justify-content-center>
+    <ion-row justify-content-center>
 
-    <ion-list style=" overflow: hidden;" >
-      <ion-item>
-        <ion-label position="floating">Nome</ion-label>
-        <ion-input type="text" value=""></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Cognome</ion-label>
-        <ion-input type="text" value=""></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Email</ion-label>
-        <ion-input type="text" value=""></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Password</ion-label>
-        <ion-input type="password" value=""></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="floating">Conferma Password</ion-label>
-        <ion-input type="password" value=""></ion-input>
-      </ion-item>
+        <ion-list style=" overflow: hidden;" >
+            <ion-item>
+                <ion-label position="floating">Nome</ion-label>
+                <ion-input type="text" value=""></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label position="floating">Cognome</ion-label>
+                <ion-input type="text" value=""></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label position="floating">Email</ion-label>
+                <ion-input type="text" value=""></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label position="floating">Password</ion-label>
+                <ion-input type="password" value=""></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label position="floating">Conferma Password</ion-label>
+                <ion-input type="password" value=""></ion-input>
+            </ion-item>
 
-      <ion-row>
-        <ion-item justify-content-center>
-          <ion-label>Ruolo</ion-label>
-        </ion-item>
-      </ion-row>
-      <ion-radio-group>
-        <ion-row justify-content-between>
-          <ion-item>
-            <ion-label >Autista</ion-label>
-            <ion-radio value="0" ></ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-label>Soccoritore</ion-label>
-            <ion-radio value="1"></ion-radio>
-          </ion-item>
-        </ion-row>
-      </ion-radio-group>
+            <ion-row>
+                <ion-item justify-content-center>
+                    <ion-label>Ruolo</ion-label>
+                </ion-item>
+            </ion-row>
+            <ion-radio-group>
+                <ion-row justify-content-between>
+                    <ion-item>
+                        <ion-label >Autista</ion-label>
+                        <ion-radio value="0" ></ion-radio>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>Soccoritore</ion-label>
+                        <ion-radio value="1"></ion-radio>
+                    </ion-item>
+                </ion-row>
+            </ion-radio-group>
 
-    </ion-list>
-    <div>
-      <ion-button color="primary" block>Conferma</ion-button>
-    </div>
+            <ion-item>
+                <ion-label>Selziona la città</ion-label>
+                <ionic-selectable
+                [(ngModel)]="city"
+                [items]="cities"
+                itemValueField="id"
+                itemTextField="city"
+                [canSearch]="true"
+                (onChange)="cityChanges($event)">
+                </ionic-selectable>
 
-  </ion-row>
+            </ion-item>
+
+        </ion-list>
+        <div>
+            <ion-button color="primary" block>Conferma</ion-button>
+        </div>
+
+    </ion-row>
 
 
 

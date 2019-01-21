@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicSelectableComponent, IonicSelectableModule} from 'ionic-selectable';
+import {IonicSelectableComponent} from 'ionic-selectable';
 
 @Component({
   selector: 'app-signin',
@@ -7,15 +7,14 @@ import {IonicSelectableComponent, IonicSelectableModule} from 'ionic-selectable'
   styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
-
-  @ViewChild('citySelector') selectComponet: IonicSelectableComponent;
   city = '';
 
   cities = [
-      'Salerno',
-      'Nola',
-      'Siano',
-      'Fisciano'
+      {id: 1, city: 'Salerno'},
+      {id: 2, city: 'Bologna'},
+      {id: 3, city: 'Sarno'},
+      {id: 4, city: 'Siano'},
+      {id: 5, city: 'Fisciano'}
   ];
 
   constructor() { }
@@ -23,8 +22,8 @@ export class SigninPage implements OnInit {
   ngOnInit() {
   }
 
-  /**cityChanges(event: {component: SelectSearchableComponent, value: any}) {
+  cityChanges(event: {component: IonicSelectableComponent, value: any}) {
     console.log('even', event);
-  }**/
+  }
 
 }
