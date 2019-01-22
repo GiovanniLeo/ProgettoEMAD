@@ -12,9 +12,10 @@ import {Platform, Events} from '@ionic/angular';
 export class HomePage {
     threshold = 2;
 
-    constructor(private localNotification: LocalNotifications, private  platform: Platform, private evets: Events) {
+    constructor(private localNotification: LocalNotifications, private  platform: Platform, private events: Events) {
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
+            this.checkThreshold(this.threshold);
         });
     }
 
@@ -25,6 +26,13 @@ export class HomePage {
                 title: 'Te scudat o\' criatur!!!',
             }
         );
+    }
+
+    checkThreshold(threshold: number): void {
+        if (threshold <= 3) {
+            console.log('Check');
+            document.getElementById('send').click();
+        }
     }
 
 }
