@@ -6,9 +6,8 @@ const routes: Routes = [
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'signin', loadChildren: './signin/signin.module#SigninPageModule' },
   { path: 'selectUser', loadChildren: './select-user/select-user.module#SelectUserPageModule' },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-
-
+  { path: 'configuration', loadChildren: './configuration/configuration.module#ConfigurationPageModule' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 
 @NgModule({
