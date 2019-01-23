@@ -9,7 +9,7 @@
   <ion-list>
     <ion-item lines="none">
       <label>Frequenza invio posizione</label>
-      <ion-icon name="information-circle" style="margin-left: 8%;" (click)="presentToastWithOptions(this.geolocationRangeMessage)"></ion-icon>
+      <ion-icon name="information-circle-outline" slot="end" (click)="presentToastWithOptions(this.geolocationRangeMessage)"></ion-icon>
     </ion-item>
     <ion-item>
       <ion-range min="{{minGeolocationRange}}" max="{{maxGeolocationRange}}" step="1" [(ngModel)]="userGeolocation"  pin>
@@ -20,28 +20,42 @@
     </ion-item>
     <ion-item lines="none">
       <label>Soglia Pericolo</label>
-      <ion-icon name="information-circle" style="margin-left: 8%;" (click)="presentToastWithOptions(this.bluetoothAllarmMessage)"></ion-icon>
+      <ion-icon name="information-circle-outline" slot="end"  (click)="presentToastWithOptions(this.bluetoothAllarmMessage)"></ion-icon>
     </ion-item>
     <ion-item>
       <ion-range min="{{minBluetoothAllarm}}" max="{{maxBluetoothAllarm}}" step="1" [(ngModel)]="userBluetoothAllarm"  pin>
         <ion-icon size="small" slot="start" name="bluetooth"></ion-icon>
         <ion-icon slot="end" name="bluetooth"></ion-icon>
       </ion-range>
-       <label style="margin-top: 4%;">{{userBluetoothAllarm}}</label>
+      <label style="margin-top: 4%;">{{userBluetoothAllarm}}</label>
+    </ion-item>
+    <ion-item lines="none">
+      <label>Timer Allarme</label>
+      <ion-icon name="information-circle-outline" slot="end"  (click)="presentToastWithOptions(this.rangeAllarmDeactivationMessage)"></ion-icon>
     </ion-item>
     <ion-item>
       <ion-range min="{{minRangeAllarmDeactivation}}" max="{{maxRangeAllarmDeactivation}}" step="1" [(ngModel)]="userAllarmDeactivation"  pin>
         <ion-icon size="small" slot="start" name="alert"></ion-icon>
         <ion-icon slot="end" name="alert"></ion-icon>
       </ion-range>
-       <label style="margin-top: 4%;">{{userAllarmDeactivation}}</label>
+      <label style="margin-top: 4%;">{{userAllarmDeactivation}}</label>
+    </ion-item>
+    <ion-item lines="none">
+      <label>Soglia comunicazione posizione</label>
+      <ion-icon name="information-circle-outline" slot="end"  (click)="presentToastWithOptions(this.bluetoothPowerGeolocationMessage)"></ion-icon>
     </ion-item>
     <ion-item>
       <ion-range min="{{minBluetoothPowerGeolocation}}" max="{{maxBluetoothPowerGeolocation}}" step="1" [(ngModel)]="UserBluetoothPowerGeolocation"  pin>
         <ion-icon size="small" slot="start" name="bluetooth"></ion-icon>
         <ion-icon slot="end" name="bluetooth"></ion-icon>
       </ion-range>
-       <label style="margin-top: 4%;">{{UserBluetoothPowerGeolocation}}</label>
+      <label style="margin-top: 4%;">{{UserBluetoothPowerGeolocation}}</label>
     </ion-item>
+  <ion-row justify-content-center>
+    <ion-button style="margin-top: 8%;" (click)="saveTodb()">Salva</ion-button>
+  </ion-row>
+     <ion-button style="margin-top: 8%;" (click)="clearDb()">Clear</ion-button>
+
+
   </ion-list>
 </ion-content>
