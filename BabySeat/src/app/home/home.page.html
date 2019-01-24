@@ -1,12 +1,25 @@
 <ion-header>
-<ion-toolbar>
+    <ion-toolbar>
         <ion-back-button defaultHref="/login" slot="start"></ion-back-button>
         <ion-title>Home</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  <ion-button (click)="sendNotification()" routerLink="/configuration">Send Notification</ion-button>
+    <ion-row justify-content-center="">
+        <ion-img *ngIf="this.danger; else elseBlock" style="width: 80%" src="..\..\assets\images\HomeImage\StatusNo.svg"></ion-img>
+        <ng-template #elseBlock>
+            <ion-img  style="width: 80%" src="..\..\assets\images\HomeImage\StatusOk.svg"></ion-img>
+        </ng-template>
+    </ion-row>
+
+    <ion-progress-bar *ngIf="this.danger" color="danger" style="margin-top: 8%" value="{{this.value}}">
+    </ion-progress-bar>
+     <label>{{this.value}}</label>
+
+    <ion-button (click)="sendNotification()" routerLink="/configuration">Send Notification</ion-button>
     <ion-button id="send" style="display: none" (click)="sendNotification()">Send Notification</ion-button>
+    <ion-button (click)="startProgresBar()" >Start P</ion-button>
+    <ion-button (click)="stopProgress()" >Stop P</ion-button>
 
 </ion-content>
