@@ -3,6 +3,7 @@ import { ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import {Router} from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import {ConstantDbService} from '../services/constantDbService/constant-db.service';
 
 @Component({
   selector: 'app-configuration',
@@ -30,13 +31,9 @@ export class ConfigurationPage implements OnInit {
   rangeAllarmDeactivationMessage = 'Indicare il tempo entro il quale disattivare la segnalazione sonora.';
   bluetoothPowerGeolocationMessage = 'Indicare la soglia sopra la quala si avvia la comunicazione della posizione al server.';
 
-  ARRAY_KEY = 'userInputConfiguration';
-  GEO_RANGE = 'userGeolocation';
-  BLU_ALLARM = 'userBluetoothAllarm';
-  ALLARM_DEACT = 'userAllarmDeactivation';
-  BLUE_GEO = 'UserBluetoothPowerGeolocation';
 
-  constructor(private toastController: ToastController, private storage: Storage, private router: Router) {}
+  constructor(private toastController: ToastController, private storage: Storage, private router: Router,
+              private constDb: ConstantDbService) {}
 
   ngOnInit() {
     this.initialSet();
@@ -55,17 +52,17 @@ export class ConfigurationPage implements OnInit {
 
   saveTodb() {
 
-    this.storage.set(this.GEO_RANGE, this.userGeolocation);
-    this.storage.set(this.BLU_ALLARM, this.userBluetoothAllarm);
-    this.storage.set(this.ALLARM_DEACT, this.userAllarmDeactivation);
-    this.storage.set(this.BLUE_GEO, this.UserBluetoothPowerGeolocation);
+    this.storage.set(this.constDb.GEO_RANGE, this.userGeolocation);
+    this.storage.set(this.constDb.BLU_ALLARM, this.userBluetoothAllarm);
+    this.storage.set(this.constDb.ALLARM_DEACT, this.userAllarmDeactivation);
+    this.storage.set(this.constDb.BLUE_GEO, this.UserBluetoothPowerGeolocation);
 
     console.log('Saved');
     this.router.navigate(['/home']);
   }
 
   initialSet() {
-    this.storage.get(this.GEO_RANGE).then((val) => {
+    this.storage.get(this.constDb.GEO_RANGE).then((val) => {
       if (val !== null && val !== undefined) {
         this.userGeolocation = val;
       } else {
@@ -73,7 +70,7 @@ export class ConfigurationPage implements OnInit {
       }
     });
 
-    this.storage.get(this.BLU_ALLARM).then((val) => {
+    this.storage.get(this.constDb.BLU_ALLARM).then((val) => {
       if (val !== null && val !== undefined) {
         this.userBluetoothAllarm = val;
       } else {
@@ -81,7 +78,7 @@ export class ConfigurationPage implements OnInit {
       }
     });
 
-    this.storage.get(this.ALLARM_DEACT).then((val) => {
+    this.storage.get(this.constDb.ALLARM_DEACT).then((val) => {
       if (val !== null && val !== undefined) {
         this.userAllarmDeactivation = val;
       } else {
@@ -89,7 +86,7 @@ export class ConfigurationPage implements OnInit {
       }
     });
 
-    this.storage.get(this.BLUE_GEO).then((val) => {
+    this.storage.get(this.constDb.BLUE_GEO).then((val) => {
       if (val !== null && val !== undefined) {
         this.UserBluetoothPowerGeolocation = val;
       } else {

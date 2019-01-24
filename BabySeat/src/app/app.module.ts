@@ -11,6 +11,7 @@ import { LocalNotifications} from '@ionic-native/local-notifications/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
