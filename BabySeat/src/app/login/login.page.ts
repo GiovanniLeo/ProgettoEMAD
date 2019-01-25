@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import {Router} from '@angular/router';
-import {ToastController} from '@ionic/angular';
+import {Platform, ToastController} from '@ionic/angular';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
+import {Diagnostic} from '@ionic-native/diagnostic/ngx';
 
 
 @Component({
@@ -11,28 +13,56 @@ import {ToastController} from '@ionic/angular';
 })
 export class LoginPage implements OnInit {
 
-  constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastController) { }
+  webFlag = false;
+
+  constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastController,
+              private backGround: BackgroundMode, private platform: Platform,
+              private diagnostic: Diagnostic) { }
 
   ngOnInit() {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      // resp.coords.latitude
-      // resp.coords.longitude
-      console.log(resp.coords.latitude + ' ' + resp.coords.longitude);
-    }).catch((error) => {
-      console.log('Error getting location', error);
-      this.presentToastWithOptions('Attiva la geolalizzazione');
+    this.platform.ready().then((rdy) => {
+
+      this.diagnostic.getLocationMode().then((state) => {
+        if (state === this.diagnostic.locationMode.LOCATION_OFF) {
+          this.presentToastWithOptions('Attiva la geolocalizzazione');
+        } else {
+          this.geolocation.getCurrentPosition().then((resp) => {
+            // resp.coords.latitude
+            // resp.coords.longitude
+            console.log(resp.coords.latitude + ' ' + resp.coords.longitude);
+            console.log('else loc');
+
+          }).catch((error) => {
+            console.log('Error getting location', error);
+            this.presentToastWithOptions('Errore nell\' ottenimento della poaizione, perfavore riprova');
+          });
+        }
+      }).catch(e => {
+        console.log('error ' + e);
+      });
     });
+    // this.backGround.enable();
   }
 
   login() {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      // resp.coords.latitude
-      // resp.coords.longitude
-      console.log(resp.coords.latitude + ' ' + resp.coords.longitude);
-      this.router.navigate(['/home']);
-    }).catch((error) => {
-      console.log('Error getting location', error);
-      this.presentToastWithOptions('Attiva la geolalizzazione');
+    this.diagnostic.getLocationMode().then((state) => {
+      if (state === this.diagnostic.locationMode.LOCATION_OFF) {
+        this.presentToastWithOptions('Attiva la geolocalizzazione');
+      } else {
+        this.geolocation.getCurrentPosition().then((resp) => {
+          // resp.coords.latitude
+          // resp.coords.longitude
+          console.log(resp.coords.latitude + ' ' + resp.coords.longitude);
+          console.log('else loc');
+          this.router.navigate(['/home']);
+
+        }).catch((error) => {
+          console.log('Error getting location', error);
+          this.presentToastWithOptions('Errore nell\' ottenimento della poaizione, perfavore riprova');
+        });
+      }
+    }).catch(e => {
+      console.log('error ' + e);
     });
   }
 
@@ -46,5 +76,7 @@ export class LoginPage implements OnInit {
     });
     toast.present();
   }
+
+
 
 }

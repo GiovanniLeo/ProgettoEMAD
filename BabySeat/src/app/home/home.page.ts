@@ -5,6 +5,7 @@ import {Storage} from '@ionic/storage';
 import {ConstantDbService} from '../services/constantDbService/constant-db.service';
 import {Router, RouterEvent} from '@angular/router';
 import {delay, filter} from 'rxjs/operators';
+import {BackgroundMode} from '@ionic-native/background-mode/ngx';
 
 
 
@@ -22,7 +23,7 @@ export class HomePage implements OnInit {
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
-                private constDb:  ConstantDbService, private router: Router) {
+                private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode) {
 
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
@@ -36,6 +37,10 @@ export class HomePage implements OnInit {
             this.instialState();
         });
         this.value = 0.0;
+
+        if (this.backMode.isEnabled()) {
+            this.sendNotification('BackMode');
+        }
     }
 
     ngOnInit(): void {
@@ -43,11 +48,11 @@ export class HomePage implements OnInit {
         console.log('Init');
     }
 
-    sendNotification() {
+    sendNotification(message: string) {
         this.localNotification.schedule(
             {
                 id: 1,
-                title: 'Te scudat o\' criatur!!!',
+                title: message,
             }
         );
     }
