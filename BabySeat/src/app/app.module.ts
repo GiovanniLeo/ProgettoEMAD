@@ -10,7 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { LocalNotifications} from '@ionic-native/local-notifications/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,7 +21,8 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     LocalNotifications,
-    AndroidPermissions
+    AndroidPermissions,
+    Geolocation
   ],
   bootstrap: [AppComponent]
 })
