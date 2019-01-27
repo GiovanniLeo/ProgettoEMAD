@@ -3,7 +3,7 @@
     <name>Baby Safety Seat</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="https://192.168.1.106:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -90,5 +90,6 @@
     </plugin>
     <plugin name="cordova-plugin-background-mode" spec="0.7.2" />
     <plugin name="cordova.plugins.diagnostic" spec="4.0.10" />
+    <allow-navigation href="https://192.168.1.106:8100" sessionid="bb7f30d9" />
     <engine name="android" spec="7.1.4" />
 </widget>
