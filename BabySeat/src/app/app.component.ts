@@ -4,7 +4,7 @@ import {Platform, ToastController} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import {tap} from 'rxjs/operators';
-import {FcmService} from '../../services/fcmService/fcm.service';
+import {FcmService} from './services/fcmService/fcm.service';
 
 @Component({
   selector: 'app-root',
