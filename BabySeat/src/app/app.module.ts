@@ -18,13 +18,14 @@ import {Firebase} from '@ionic-native/firebase/ngx';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {environment} from '../environments/environment';
+import {Clipboard} from '@ionic-native/clipboard/ngx';
 
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),
-  AngularFireModule.initializeApp(environment.firebase), AngularFirestoreModule],
+    AngularFireModule.initializeApp(environment.firebase), AngularFirestoreModule],
   providers: [
     StatusBar,
     SplashScreen,
@@ -35,7 +36,8 @@ import {environment} from '../environments/environment';
     BackgroundMode,
     Diagnostic,
     LocationAccuracy,
-    Firebase
+    Firebase,
+    Clipboard
   ],
   bootstrap: [AppComponent]
 })
