@@ -7,7 +7,8 @@ const routes: Routes = [
   { path: 'signin', loadChildren: './signin/signin.module#SigninPageModule' },
   { path: 'selectUser', loadChildren: './select-user/select-user.module#SelectUserPageModule' },
   { path: 'configuration', loadChildren: './configuration/configuration.module#ConfigurationPageModule' },
-  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  { path: '', redirectTo: 'login', pathMatch: 'full' },  { path: 'map-view', loadChildren: './map-view/map-view.module#MapViewPageModule' }
+
 ];
 
 @NgModule({
