@@ -51,12 +51,17 @@
             <ion-item>
                 <ion-label>Selziona la città</ion-label>
                 <ionic-selectable
-                [(ngModel)]="city"
-                [items]="cities"
-                itemValueField="id"
-                itemTextField="city"
-                [canSearch]="true"
-                (onChange)="cityChanges($event)">
+                        [(ngModel)]="city"
+                        [items]="cities"
+                        itemValueField="istat"
+                        itemTextField="comune"
+                        [canSearch]="true"
+                        [hasInfiniteScroll]="true"
+                        (onChange)="cityChanges($event)"
+                        [hasVirtualScroll]="true" >
+                    <!--(onInfiniteScroll)="getMoreCities($event)"
+                    (onSearchFail)="onSearchFail($event)" -->
+
                 </ionic-selectable>
 
             </ion-item>

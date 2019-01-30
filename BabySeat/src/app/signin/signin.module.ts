@@ -7,6 +7,7 @@ import { SigninPage } from './signin.page';
 import {IonicSelectableModule} from 'ionic-selectable';
 import {NO_ERRORS_SCHEMA} from '@angular/core';
 
+
 const routes: Routes = [
   {
     path: '',
@@ -20,7 +21,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    IonicSelectableModule
+    IonicSelectableModule,
   ],
   declarations: [SigninPage],
   schemas: [NO_ERRORS_SCHEMA]

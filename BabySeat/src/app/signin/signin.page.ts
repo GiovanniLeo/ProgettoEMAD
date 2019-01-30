@@ -1,29 +1,46 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {IonicSelectableComponent} from 'ionic-selectable';
+import {CityService} from '../services/cityService/city.service';
+import {City} from '../classes/City';
+import {Platform} from '@ionic/angular';
 
 @Component({
-  selector: 'app-signin',
-  templateUrl: './signin.page.html',
-  styleUrls: ['./signin.page.scss'],
+    selector: 'app-signin',
+    templateUrl: './signin.page.html',
+    styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
-  city = '';
+    city: City;
 
-  cities = [
-      {id: 1, city: 'Salerno'},
-      {id: 2, city: 'Bologna'},
-      {id: 3, city: 'Sarno'},
-      {id: 4, city: 'Siano'},
-      {id: 5, city: 'Fisciano'}
-  ];
+    cities: City[];
+    count = 1;
+    allCities: City[];
 
-  constructor() { }
+    constructor(private cityService: CityService, private platform: Platform) {
+        this.getCities();
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+        this.platform.ready().then((rdy) => {
+            this.getCities();
+        });
+    }
 
-  cityChanges(event: {component: IonicSelectableComponent, value: any}) {
-    console.log('even', event);
-  }
+    cityChanges(event: {component: IonicSelectableComponent, value: any}) {
+        console.log('even', event);
+        console.log(this.city);
+    }
+
+    getCities() {
+        this.cityService.getData().subscribe((data) => {
+            // this.cities = data.slice(0, 1000);
+            this.cities = data;
+        });
+        this.cityService.getData().subscribe((data) => {
+            this.allCities = data;
+            console.log(this.allCities);
+        });
+    }
+
 
 }
