@@ -11,13 +11,8 @@ import {Platform} from '@ionic/angular';
 })
 export class SigninPage implements OnInit {
     city: City;
-
     cities: City[];
-    count = 1;
-    allCities: City[];
-
     constructor(private cityService: CityService, private platform: Platform) {
-        this.getCities();
     }
 
     ngOnInit() {
@@ -35,10 +30,6 @@ export class SigninPage implements OnInit {
         this.cityService.getData().subscribe((data) => {
             // this.cities = data.slice(0, 1000);
             this.cities = data;
-        });
-        this.cityService.getData().subscribe((data) => {
-            this.allCities = data;
-            console.log(this.allCities);
         });
     }
 
