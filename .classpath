@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-android/framework/src"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-android/spec/fixtures/org.test.plugins.dummyplugin/src/android"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-android/spec/fixtures/org.test.plugins.faultyplugin/src/android"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-android/test/app/src/androidTest/java"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-android/test/app/src/main/java"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-android/test/app/src/test/java"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-plugin-android-permissions/src/android"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-plugin-ionic-webview/src/android"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-plugin-mauron85-background-geolocation/android/plugin/src/androidTest/java"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-plugin-mauron85-background-geolocation/android/plugin/src/main/java"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-plugin-mauron85-background-geolocation/android/plugin/src/test/java"/>
+	<classpathentry kind="src" path="BabySeat/node_modules/cordova-sqlite-storage/src/android"/>
+	<classpathentry kind="lib" path="BabySeat/node_modules/cordova-plugin-mauron85-background-geolocation/android/gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="lib" path="BabySeat/node_modules/cordova-sqlite-storage-dependencies/libs/sqlite-connector.jar"/>
+	<classpathentry kind="lib" path="BabySeat/node_modules/cordova-sqlite-storage-dependencies/libs/sqlite-native-driver.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
