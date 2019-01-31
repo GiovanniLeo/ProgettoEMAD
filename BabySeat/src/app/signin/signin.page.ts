@@ -28,7 +28,6 @@ export class SigninPage implements OnInit {
 
     getCities() {
         this.cityService.getData().subscribe((data) => {
-            // this.cities = data.slice(0, 1000);
             this.cities = data;
         });
     }
