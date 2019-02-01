@@ -15,7 +15,7 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 })
 export class LoginPage implements OnInit {
 
-  webFlag = false;
+  webFlag = true;
 
   constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastController,
               private backGround: BackgroundMode, private platform: Platform,

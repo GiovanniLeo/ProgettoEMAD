@@ -24,6 +24,8 @@
     "@ionic-native/android-permissions": "^5.0.0",
     "@ionic-native/background-geolocation": "^5.0.0",
     "@ionic-native/background-mode": "^5.0.0",
+    "@ionic-native/ble": "^5.0.0",
+    "@ionic-native/bluetooth-le": "^5.0.0",
     "@ionic-native/clipboard": "^5.0.0",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/diagnostic": "^5.0.0",
@@ -41,6 +43,8 @@
     "cordova-plugin-android-permissions": "1.0.0",
     "cordova-plugin-background-mode": "0.7.2",
     "cordova-plugin-badge": "0.8.8",
+    "cordova-plugin-ble-central": "1.2.2",
+    "cordova-plugin-compat": "1.2.0",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-firebase": "2.0.5",
     "cordova-plugin-geolocation": "4.0.1",
@@ -121,7 +125,8 @@
       "cordova-plugin-background-mode": {},
       "cordova-plugin-firebase": {},
       "cordova-plugin-nativegeocoder": {},
-      "cordova-clipboard": {}
+      "cordova-clipboard": {},
+      "cordova-plugin-ble-central": {}
     },
     "platforms": [
       "android"
