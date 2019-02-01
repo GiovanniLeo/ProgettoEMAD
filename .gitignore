@@ -1,3 +1,7 @@
 
 \.idea/
+<<<<<<< HEAD
 /bin/
+=======
+\src\environments/
+>>>>>>> origin/master

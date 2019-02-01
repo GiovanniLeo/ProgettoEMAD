@@ -1,12 +1,21 @@
-import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {Injectable, OnInit} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {City} from '../../classes/City';
+import {Observable} from 'rxjs';
+import { delay } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class CityService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
-  getData() {
 
+  getData(): Observable<City[]> {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return  this.http.get<City[]>('../../assets/Json/cityCoords.json', {headers: headers});
   }
 }

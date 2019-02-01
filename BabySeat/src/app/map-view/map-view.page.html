@@ -1,0 +1,13 @@
+<ion-header>
+  <ion-toolbar>
+        <ion-back-button defaultHref="/home" slot="start"></ion-back-button>
+        <ion-title>Mappa</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <div id="map" style="width:100%; height:60%;"></div>
+  <ion-row justify-content-center="">
+    <ion-button style="margin-top: 8%;" (click)="copyCoordsClipsboard()">Copia coordinate</ion-button>
+  </ion-row>
+</ion-content>
