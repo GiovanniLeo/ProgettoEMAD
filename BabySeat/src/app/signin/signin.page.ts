@@ -23,7 +23,9 @@ export class SigninPage implements OnInit {
             cognome: ['', Validators.required],
             email: ['', Validators.required],
             password: ['', Validators.required],
-            confermap: ['', Validators.required]
+            confermap: ['', Validators.required],
+            ruolo: ['', Validators.required],
+            citta: ['', Validators.required]
         });
     }
 

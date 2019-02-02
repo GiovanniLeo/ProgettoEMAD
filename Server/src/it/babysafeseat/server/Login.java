@@ -10,14 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.bson.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-
-import it.babysafeseat.database.DatabaseManager;
+import it.babysafeseat.database.Queries;
 
 /**
  * Servlet implementation class Login
@@ -33,10 +28,6 @@ public class Login extends HttpServlet {
     log = Logger.getLogger("global");
   }
 
-
-  /**
-   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-   */
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     String textRequest = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
@@ -53,29 +44,16 @@ public class Login extends HttpServlet {
       password = null;
     }
     
-    if(checkLogin(email, password)) {
-      log.info("L'utente esiste!");
+    if(Queries.checkLogin(email, password)) {
+      log.info("User found");
       jsonResponse.append("found", "true");
     }else {
-      log.info("L'utente non esiste!");
+      log.info("User not found");
       jsonResponse.append("found", "false");
     }
     
     response.getWriter().write(jsonResponse.toString());
   }
 
-  private boolean checkLogin(String email, String password) {
-    if(email == null || password == null) return false;
-    
-    Document loginQuery = new Document().append("Email", email).append("Password", password);
 
-    MongoCollection<Document> coll = DatabaseManager.getUsers();
-    
-    FindIterable<Document> users = coll.find(loginQuery);
-    
-    //if the user exists (it's just one), returns true
-    if(users.iterator().hasNext()) return true;
-    
-    return false;
-  }
 }
