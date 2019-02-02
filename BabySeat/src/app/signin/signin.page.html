@@ -12,23 +12,23 @@
         <ion-list style=" overflow: hidden;" >
             <ion-item>
                 <ion-label position="floating">Nome</ion-label>
-                <ion-input type="text" value=""></ion-input>
+                <ion-input type="text" formControlName="nome" value=""></ion-input>
             </ion-item>
             <ion-item>
                 <ion-label position="floating">Cognome</ion-label>
-                <ion-input type="text" value=""></ion-input>
+                <ion-input type="text" formControlName="cognome" value=""></ion-input>
             </ion-item>
             <ion-item>
                 <ion-label position="floating">Email</ion-label>
-                <ion-input type="text" value=""></ion-input>
+                <ion-input type="text" formControlName="email" value=""></ion-input>
             </ion-item>
             <ion-item>
                 <ion-label position="floating">Password</ion-label>
-                <ion-input type="password" value=""></ion-input>
+                <ion-input type="password" formControlName="password" value=""></ion-input>
             </ion-item>
             <ion-item>
                 <ion-label position="floating">Conferma Password</ion-label>
-                <ion-input type="password" value=""></ion-input>
+                <ion-input type="password" formControlName="confermap" value=""></ion-input>
             </ion-item>
 
             <ion-row>
@@ -36,7 +36,7 @@
                     <ion-label>Ruolo</ion-label>
                 </ion-item>
             </ion-row>
-            <ion-radio-group>
+            <ion-radio-group formControlName="tipo">
                 <ion-row justify-content-between>
                     <ion-item lines="none">
                         <ion-label >Autista</ion-label>
@@ -51,7 +51,7 @@
 
             <ion-item>
                 <ion-label>Selziona la città</ion-label>
-                <ionic-selectable
+                <ionic-selectable formControlName="citta"
                         [(ngModel)]="city"
                         [items]="cities"
                         itemValueField="istat"
