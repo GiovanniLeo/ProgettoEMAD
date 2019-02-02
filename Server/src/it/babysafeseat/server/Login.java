@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bson.Document;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.mongodb.client.FindIterable;
@@ -42,21 +43,30 @@ public class Login extends HttpServlet {
     JSONObject jsonRequest = new JSONObject(textRequest);
     JSONObject jsonResponse = new JSONObject();
     
-    String email = jsonRequest.getString("email");
-    String password = jsonRequest.getString("password");
-
+    String email, password;
+    
+    try {
+      email = jsonRequest.getString("email");
+      password = jsonRequest.getString("password");
+    }catch(JSONException e) {
+      email = null;
+      password = null;
+    }
+    
     if(checkLogin(email, password)) {
-      jsonResponse.append("found", "true");
       log.info("L'utente esiste!");
+      jsonResponse.append("found", "true");
     }else {
-      jsonResponse.append("found", "false");
       log.info("L'utente non esiste!");
+      jsonResponse.append("found", "false");
     }
     
     response.getWriter().write(jsonResponse.toString());
   }
 
   private boolean checkLogin(String email, String password) {
+    if(email == null || password == null) return false;
+    
     Document loginQuery = new Document().append("Email", email).append("Password", password);
 
     MongoCollection<Document> coll = DatabaseManager.getUsers();
@@ -64,9 +74,8 @@ public class Login extends HttpServlet {
     FindIterable<Document> users = coll.find(loginQuery);
     
     //if the user exists (it's just one), returns true
-    for(Document temp : users) {
-      return true;
-    }
+    if(users.iterator().hasNext()) return true;
+    
     return false;
   }
 }

@@ -46,9 +46,7 @@ export class LoginPage implements OnInit {
   }
 
   checkLogin() {
-    if (this.webFlag) {
-      // this.getPositionOnWeb(true);
-      this.http.post('http://localhost:8080/BabySafeSeatServer/Registrazione', this.formLogin.value, {}).
+    this.http.post('http://localhost:8080/BabySafeSeatServer/Login', this.formLogin.value, {}).
       subscribe(data => {
         this.response = JSON.stringify(data);
         console.log(this.response);
@@ -58,8 +56,6 @@ export class LoginPage implements OnInit {
         console.log(error.error);
         console.log(error.headers);
       });
-    }
-    this.getPositionOnDevice(true);
   }
 
   async presentToastWithOptions(message: string) {

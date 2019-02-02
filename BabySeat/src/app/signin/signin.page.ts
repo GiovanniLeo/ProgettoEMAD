@@ -19,8 +19,11 @@ export class SigninPage implements OnInit {
 
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder, private http: HttpClient) {
         this.formReg = form.group({
+            nome: ['', Validators.required],
+            cognome: ['', Validators.required],
             email: ['', Validators.required],
-            password: ['', Validators.required]
+            password: ['', Validators.required],
+            confermap: ['', Validators.required]
         });
     }
 

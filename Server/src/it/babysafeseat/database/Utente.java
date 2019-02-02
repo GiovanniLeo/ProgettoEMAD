@@ -1,5 +1,6 @@
 package it.babysafeseat.database;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Utente {
@@ -72,12 +73,16 @@ public class Utente {
   public static Utente fromJson(JSONObject json) {
     Utente u = new Utente();
     
-    u.setNome(json.getString("nome"));
-    u.setCognome(json.getString("cognome"));
-    u.setEmail(json.getString("email"));
-    u.setPassword(json.getString("password"));
-   // u.setTipo(json.getString("tipo"));
-    
+    try {
+      u.setNome(json.getString("nome"));
+      u.setCognome(json.getString("cognome"));
+      u.setEmail(json.getString("email"));
+      u.setPassword(json.getString("password"));
+     // u.setTipo(json.getString("tipo"));
+    }catch(JSONException e) {
+      return null;
+    }
+        
     return u;
   }
   

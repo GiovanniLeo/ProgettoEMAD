@@ -18,11 +18,12 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,,
+    ReactiveFormsModule,
     HttpClientModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],
   declarations: [LoginPage]
 })
+
 export class LoginPageModule {}
