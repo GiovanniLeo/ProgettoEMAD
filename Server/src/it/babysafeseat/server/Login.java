@@ -40,17 +40,20 @@ public class Login extends HttpServlet {
 
     String textRequest = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
     JSONObject jsonRequest = new JSONObject(textRequest);
-
+    JSONObject jsonResponse = new JSONObject();
+    
     String email = jsonRequest.getString("email");
     String password = jsonRequest.getString("password");
 
     if(checkLogin(email, password)) {
-
+      jsonResponse.append("found", "true");
       log.info("L'utente esiste!");
     }else {
-
+      jsonResponse.append("found", "false");
       log.info("L'utente non esiste!");
     }
+    
+    response.getWriter().write(jsonResponse.toString());
   }
 
   private boolean checkLogin(String email, String password) {

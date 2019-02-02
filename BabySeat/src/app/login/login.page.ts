@@ -6,6 +6,8 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import {Diagnostic} from '@ionic-native/diagnostic/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
+import { HttpClient } from '@angular/common/http';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 
 @Component({
@@ -16,11 +18,21 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 export class LoginPage implements OnInit {
 
   webFlag = false;
+  formLogin: FormGroup;
+  response: String;
 
   constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastController,
               private backGround: BackgroundMode, private platform: Platform,
               private diagnostic: Diagnostic, private locationAccuracy: LocationAccuracy,
-              private androidPermissions: AndroidPermissions) { }
+              private androidPermissions: AndroidPermissions,
+              private http: HttpClient,
+              private form: FormBuilder) {
+    this.formLogin = form.group({
+      email: ['', Validators.required],
+      password: ['', Validators.required]
+
+    });
+  }
 
   ngOnInit() {
     if (this.webFlag) {
@@ -33,9 +45,19 @@ export class LoginPage implements OnInit {
     // this.backGround.enable();
   }
 
-  login() {
+  checkLogin() {
     if (this.webFlag) {
-      this.getPositionOnWeb(true);
+      // this.getPositionOnWeb(true);
+      this.http.post('http://localhost:8080/BabySafeSeatServer/Registrazione', this.formLogin.value, {}).
+      subscribe(data => {
+        this.response = JSON.stringify(data);
+        console.log(this.response);
+
+      }, error => {
+        console.log(error.status);
+        console.log(error.error);
+        console.log(error.headers);
+      });
     }
     this.getPositionOnDevice(true);
   }

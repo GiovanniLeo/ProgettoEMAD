@@ -6,6 +6,7 @@
 </ion-header>
 
 <ion-content>
+    <form [formGroup]="regForm" (ngSubmit)="registrazione()">
     <ion-row justify-content-center>
 
         <ion-list style=" overflow: hidden;" >
@@ -68,12 +69,12 @@
 
         </ion-list>
         <div>
-            <ion-button color="primary" routerLink="/selectUser">Conferma</ion-button>
+            <ion-button color="primary" type="submit">Conferma</ion-button>
         </div>
 
     </ion-row>
 
-
+    </form>
 
 </ion-content>
 

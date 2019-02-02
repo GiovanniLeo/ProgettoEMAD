@@ -5,11 +5,13 @@
 </ion-header>
 
 <ion-content>
+  <form [formGroup]="logForm" (ngSubmit)="login()">
   <ion-row justify-content-center>
 
     <ion-thumbnail style="height: 60%;width: 60%;margin-top: 3%">
       <ion-img  src="../assets/images/IcoBabySafe.png"></ion-img>
     </ion-thumbnail>
+
 
     <ion-list>
       <ion-item>
@@ -24,9 +26,9 @@
     </ion-list>
   </ion-row>
   <ion-row justify-content-center>
-    <ion-button color="primary" (click)="login()">Accedi</ion-button>
+    <ion-button color="primary" type="submit">Accedi</ion-button>
   </ion-row>
-
+    </form>
   <ion-row justify-content-center style="margin-top: 3%">
     <span>Non sei registrato?</span>
     <a routerLink="/signin" >Iscriviti</a>

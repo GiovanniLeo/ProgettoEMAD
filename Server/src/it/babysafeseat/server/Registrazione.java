@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.bson.Document;
 import org.json.JSONObject;
+
 import com.mongodb.client.MongoCollection;
 
 import it.babysafeseat.database.DatabaseManager;
@@ -40,17 +41,19 @@ public class Registrazione extends HttpServlet {
     //la richiesta è ricevuta come oggetto JSON, dal quale è possibile recuperare e controllare i parametri
     String textRequest = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
     JSONObject jsonRequest = new JSONObject(textRequest);
-
-    Utente u = Utente.fromJson(jsonRequest);
-
-    if(addUser(u)) {
-
-      log.info("Utente inserito!");      
-    } else {
-
-      log.info("Problema con l'inserimento!");
-    }
+    JSONObject jsonResponse = new JSONObject();
     
+    Utente u = Utente.fromJson(jsonRequest);
+    
+    if(addUser(u)) {
+      log.info("Utente inserito!");   
+      jsonResponse.append("added", "true");
+    } else {
+      log.info("Problema con l'inserimento!");
+      jsonResponse.append("added", "false");
+    }
+   
+    response.getWriter().write(jsonResponse.toString());
   }
 
   private boolean addUser(Utente u) {
@@ -58,12 +61,16 @@ public class Registrazione extends HttpServlet {
     if(u.getNome() == null || u.getCognome() == null || u.getEmail() == null || u.getPassword() == null) return false;
    
     MongoCollection<Document> users = DatabaseManager.getUsers(); 
+    
+    if(users==null) return false;
+    
     Document userDocument = new Document().append("Nome", u.getNome())
         .append("Cognome", u.getCognome())
         .append("Email", u.getEmail())
         .append("Password", u.getPassword());
 
 
+    
     users.insertOne(userDocument);
     return true;
   }
