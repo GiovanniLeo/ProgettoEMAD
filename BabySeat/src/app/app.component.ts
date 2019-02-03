@@ -5,7 +5,6 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import {tap} from 'rxjs/operators';
 import {FcmService} from './services/fcmService/fcm.service';
-import {BleService} from './services/BleService/ble.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +17,6 @@ export class AppComponent {
       private statusBar: StatusBar,
       private fcm: FcmService,
       private toastCtrl: ToastController,
-      private  bleService: BleService
   ) {
     this.initializeApp();
   }

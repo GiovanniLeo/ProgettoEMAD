@@ -24,6 +24,7 @@ import {BLE} from '@ionic-native/ble/ngx';
 
 
 
+
 @NgModule({
     declarations: [AppComponent],
     entryComponents: [],

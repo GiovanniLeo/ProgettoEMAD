@@ -4,28 +4,31 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-row justify-content-center>
+<ion-content justify-content-center="">
 
-    <ion-thumbnail style="height: 60%;width: 60%;margin-top: 3%">
-      <ion-img  src="../assets/images/IcoBabySafe.png"></ion-img>
-    </ion-thumbnail>
+  <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <ion-row justify-content-center>
 
-    <ion-list>
-      <ion-item>
-        <ion-label position="floating">Email</ion-label>
-        <ion-input type="text" value=""></ion-input>
-      </ion-item>
+      <ion-thumbnail style="height: 60%;width: 60%;margin-top: 3%">
+        <ion-img  src="../assets/images/IcoBabySafe.png"></ion-img>
+      </ion-thumbnail>
 
-      <ion-item>
-        <ion-label position="floating">Password</ion-label>
-        <ion-input type="password" value=""></ion-input>
-      </ion-item>
-    </ion-list>
-  </ion-row>
-  <ion-row justify-content-center>
-    <ion-button color="primary" (click)="login()">Accedi</ion-button>
-  </ion-row>
+
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input type="text" formControlName="email" value=""></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Password</ion-label>
+          <ion-input type="password" formControlName="password" value=""></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-row>
+    <ion-row justify-content-center>
+      <ion-button  [disabled]="loginForm?.invalid" color="primary" type="submit">Accedi</ion-button>
+    </ion-row>
+  </form>
 
   <ion-row justify-content-center style="margin-top: 3%">
     <span>Non sei registrato?</span>

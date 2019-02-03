@@ -1,5 +1,4 @@
 import {Component, NgZone, OnInit} from '@angular/core';
-import {BleService} from '../services/BleService/ble.service';
 import {Platform} from '@ionic/angular';
 import {BLE} from '@ionic-native/ble/ngx';
 import {ToastService} from '../services/toastService/toast.service';
@@ -71,6 +70,7 @@ export class BleConnetPage implements OnInit {
     this.ble.readRSSI(this.peripheral.id).then(
         (rssi) => {
           console.log('RSSI: ' + rssi );
+          this.setStatus('RSSI: ' + rssi );
         }
     );
     // // Subscribe for notifications when the temperature changes

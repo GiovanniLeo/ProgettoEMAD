@@ -6,6 +6,13 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import {Diagnostic} from '@ionic-native/diagnostic/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
+import {PermissionService} from '../services/perssionService/permission.service';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ToastService} from '../services/toastService/toast.service';
+import {HttpClient} from '@angular/common/http';
+import {ConstantDbService} from '../services/constantDbService/constant-db.service';
+import { HttpHeaders } from '@angular/common/http';
+
 
 
 @Component({
@@ -16,46 +23,81 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 export class LoginPage implements OnInit {
 
   webFlag = true;
+  loginForm: FormGroup;
+  email: FormControl;
+  password: FormControl;
+  lat; long;
+  response;
 
-  constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastController,
+
+  constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastService,
               private backGround: BackgroundMode, private platform: Platform,
               private diagnostic: Diagnostic, private locationAccuracy: LocationAccuracy,
-              private androidPermissions: AndroidPermissions) { }
+              private androidPermissions: AndroidPermissions,
+              private permissionService: PermissionService,
+              private fb: FormBuilder,
+              private http: HttpClient,
+              private constDB: ConstantDbService) {}
+
 
   ngOnInit() {
     if (this.webFlag) {
       this.getPositionOnWeb(false);
     }
     this.platform.ready().then((rdy) => {
-      this.requestGPSpermission();
+      this.permissionService.requestGPSpermission();
       this.getPositionOnDevice(false);
     });
     // this.backGround.enable();
+    this.loginForm = this.fb.group({
+      email: [this.email, [
+        Validators.required,
+        Validators.email
+      ]],
+      password: [this.password, [
+        Validators.required
+      ]]
+    });
   }
 
   login() {
+
     if (this.webFlag) {
-      this.getPositionOnWeb(true);
+      this.getPositionOnWeb(false);
     }
-    this.getPositionOnDevice(true);
+    this.getPositionOnDevice(false);
+
+    const valueToSubmit = {
+      email: this.getEmail(),
+      password: this.getPassword() /*,
+      latitude: this.lat,
+      longitude: this.long*/
+    };
+
+    const url = this.constDB.IP_ADR_PORT + 'Login';
+
+    this.http.post(url, valueToSubmit, {}).subscribe(
+        data => {
+          // this.response = JSON.stringify(data);
+          console.log('Response');
+          console.log(data);
+
+        }, error => {
+          console.log(error.status);
+          console.log(error.error);
+          console.log(error.headers);
+        });
+    console.log(valueToSubmit);
+
   }
 
-  async presentToastWithOptions(message: string) {
-    console.log(message);
-    const toast = await this.toastController.create({
-      message: message,
-      showCloseButton: true,
-      position: 'middle',
-      closeButtonText: 'Ok'
-    });
-    toast.present();
-  }
+
 
 
   getPositionOnWeb(navigate: boolean) {
     this.geolocation.getCurrentPosition().then((resp) => {
-      // resp.coords.latitude
-      // resp.coords.longitude
+      this.lat = resp.coords.latitude;
+      this.long = resp.coords.longitude;
       console.log(resp.coords.latitude + ' ' + resp.coords.longitude);
       console.log('else loc');
       if (navigate === true) {
@@ -63,7 +105,7 @@ export class LoginPage implements OnInit {
       }
     }).catch((error) => {
       console.log('Error getting location', error);
-      this.presentToastWithOptions('Errore nell\' ottenimento della poaizione, perfavore riprova');
+      this.toastController.presentToastWithOptions('Errore nell\' ottenimento della poaizione, perfavore riprova');
     });
   }
 
@@ -71,20 +113,18 @@ export class LoginPage implements OnInit {
     this.diagnostic.getLocationMode().then((state) => {
       if (state === this.diagnostic.locationMode.LOCATION_OFF) {
         this.requestPositionAttivation();
-        // this.presentToastWithOptions('Attiva la geolocalizzazione');
       } else {
         this.geolocation.getCurrentPosition().then((resp) => {
-          // resp.coords.latitude
-          // resp.coords.longitude
+          this.lat = resp.coords.latitude;
+          this.long = resp.coords.longitude;
           console.log(resp.coords.latitude + ' ' + resp.coords.longitude);
           console.log('else loc');
           if (navigate === true) {
             this.router.navigate(['/home']);
           }
-
         }).catch((error) => {
           console.log('Error getting location', error);
-          this.presentToastWithOptions('Errore nell\' ottenimento della poaizione, perfavore riprova');
+          this.toastController.presentToastWithOptions('Errore nell\' ottenimento della poaizione, perfavore riprova');
         });
       }
     }).catch(e => {
@@ -105,15 +145,15 @@ export class LoginPage implements OnInit {
 
     });
   }
-  // Richiedo i pwermessi
-  requestGPSpermission() {
-    this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then(
-        result => {
-          console.log('Has permission?', result.hasPermission);
-          this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION);
-        },
-        err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
-    );
+
+  getEmail() {
+    return this.loginForm.get('email').value;
   }
+
+  getPassword() {
+    return this.loginForm.get('password').value;
+  }
+
+
 
 }
