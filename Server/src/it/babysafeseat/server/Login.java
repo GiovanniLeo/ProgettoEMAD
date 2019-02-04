@@ -29,13 +29,12 @@ public class Login extends HttpServlet {
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     String textRequest = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
     JSONObject jsonRequest = new JSONObject(textRequest);
     JSONObject jsonResponse = new JSONObject();
-    
+
     String email, password;
-    
+
     try {
       email = jsonRequest.getString("email");
       password = jsonRequest.getString("password");
@@ -43,7 +42,7 @@ public class Login extends HttpServlet {
       email = null;
       password = null;
     }
-    
+
     if(Queries.checkLogin(email, password)) {
       log.info("User found");
       jsonResponse.append("found", "true");
@@ -51,9 +50,17 @@ public class Login extends HttpServlet {
       log.info("User not found");
       jsonResponse.append("found", "false");
     }
-    
+
+
     response.getWriter().write(jsonResponse.toString());
   }
 
-
+  //for Preflight
+  @Override
+  protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
+    resp.setHeader("Access-Control-Allow-Headers", "*");
+    resp.setHeader("Access-Control-Allow-Origin", "*");
+    resp.setStatus(HttpServletResponse.SC_OK);
+  }
 }

@@ -48,7 +48,7 @@ export class SigninPage implements OnInit {
 
     checkRegistrazione() {
        // this.getPositionOnWeb(true);
-       this.http.post('http://localhost:8080/BabySafeSeatServer/Registrazione', this.formReg.value, {})
+       this.http.post('http://192.168.1.10:8080/BabySafeSeatServer/Registrazione', this.formReg.value, {})
            .subscribe(data => {
                 this.response = JSON.stringify(data);
                 console.log(this.response);

@@ -22,7 +22,7 @@ import it.babysafeseat.database.Utente;
 public class Registrazione extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private Logger log;
- 
+
   public Registrazione() {
     super();
     log = Logger.getLogger("global");
@@ -42,8 +42,8 @@ public class Registrazione extends HttpServlet {
       e.printStackTrace();
       u = null;
     }
-    
-    
+
+
     if(Queries.addUser(u)) {
       log.info("Utente inserito!");   
       jsonResponse.append("added", "true");
@@ -54,6 +54,15 @@ public class Registrazione extends HttpServlet {
 
     response.getWriter().write(jsonResponse.toString());
 
+  }
+
+  //for Preflight
+  @Override
+  protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
+    resp.setHeader("Access-Control-Allow-Headers", "*");
+    resp.setHeader("Access-Control-Allow-Origin", "*");
+    resp.setStatus(HttpServletResponse.SC_OK);
   }
 
 }
