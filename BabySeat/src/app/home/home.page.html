@@ -15,12 +15,14 @@
 
     <ion-progress-bar *ngIf="this.danger" color="danger" style="margin-top: 8%" value="{{this.value}}">
     </ion-progress-bar>
-     <label>{{this.value}}</label>
+    <label>{{this.value}}</label>
 
     <ion-button (click)="sendNotification('Bambino Dimenticato')" routerLink="/configuration">Send Notification</ion-button>
     <ion-button id="send" style="display: none" (click)="sendNotification()">Send Notification</ion-button>
     <ion-button (click)="startProgresBar('Bambino Dimenticato')" >Start P</ion-button>
     <ion-button (click)="stopProgress()" >Stop P</ion-button>
     <ion-button  routerLink="/map-view">Vedi mappa</ion-button>
+    <ion-button  routerLink="/ble-connet">Connessione</ion-button>
+
 
 </ion-content>

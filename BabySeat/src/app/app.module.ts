@@ -20,28 +20,32 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {environment} from '../environments/environment';
 import {Clipboard} from '@ionic-native/clipboard/ngx';
 import {HttpClientModule} from '@angular/common/http';
+import {BLE} from '@ionic-native/ble/ngx';
+
+
 
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),
-    AngularFireModule.initializeApp(environment.firebase), AngularFirestoreModule,
-    HttpClientModule],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    LocalNotifications,
-    AndroidPermissions,
-    Geolocation,
-    BackgroundMode,
-    Diagnostic,
-    LocationAccuracy,
-    Firebase,
-    Clipboard
-  ],
-  bootstrap: [AppComponent]
+    declarations: [AppComponent],
+    entryComponents: [],
+    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),
+        AngularFireModule.initializeApp(environment.firebase), AngularFirestoreModule,
+        HttpClientModule],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        LocalNotifications,
+        AndroidPermissions,
+        Geolocation,
+        BackgroundMode,
+        Diagnostic,
+        LocationAccuracy,
+        Firebase,
+        Clipboard,
+        BLE
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}
 
