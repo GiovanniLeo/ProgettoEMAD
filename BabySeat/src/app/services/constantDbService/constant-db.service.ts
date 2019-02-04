@@ -11,6 +11,6 @@ export class ConstantDbService {
   BLU_ALLARM = 'userBluetoothAllarm';
   ALLARM_DEACT = 'userAllarmDeactivation';
   BLUE_GEO = 'UserBluetoothPowerGeolocation';
-  IP_ADR_PORT = 'http://localhost:8080/Server'; // 'http://192.168.1.106:8080/Server';
+  IP_ADR_PORT = 'http://192.168.1.10:8080/BabySafeSeatServer'; // 'http://192.168.1.106:8080/Server';
 
 }
