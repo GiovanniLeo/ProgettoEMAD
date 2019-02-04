@@ -28,6 +28,8 @@ export class LoginPage implements OnInit {
   password: FormControl;
   lat; long;
   response;
+  loginSucces = false;
+  showError = false;
 
 
   constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastService,
@@ -69,16 +71,33 @@ export class LoginPage implements OnInit {
 
     const valueToSubmit = {
       email: this.getEmail(),
-      password: this.getPassword() /*,
+      password: this.getPassword(),
       latitude: this.lat,
-      longitude: this.long*/
+      longitude: this.long
     };
 
-    const url = this.constDB.IP_ADR_PORT + 'Login';
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'my-auth-token',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'DELETE, POST, GET, OPTIONS' ,
+        'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
+      })
+    };
 
-    this.http.post(url, valueToSubmit, {}).subscribe(
+    const url = this.constDB.IP_ADR_PORT + '/Login';
+
+    this.http.post( url , valueToSubmit, httpOptions).subscribe(
         data => {
-          // this.response = JSON.stringify(data);
+          this.response = data;
+          this.loginSucces = this.response.found[0];
+          console.log(this.loginSucces);
+          if (this.loginSucces === true) {
+            this.router.navigate(['/home']);
+          } else {
+            this.showError = true;
+          }
           console.log('Response');
           console.log(data);
 
@@ -153,6 +172,8 @@ export class LoginPage implements OnInit {
   getPassword() {
     return this.loginForm.get('password').value;
   }
+
+
 
 
 
