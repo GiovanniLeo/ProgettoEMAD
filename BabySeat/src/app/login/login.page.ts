@@ -30,6 +30,7 @@ export class LoginPage implements OnInit {
   response;
   loginSucces = false;
   showError = false;
+  unespectedError = false;
 
 
   constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastService,
@@ -94,6 +95,7 @@ export class LoginPage implements OnInit {
           this.loginSucces = this.response.found[0];
           console.log(this.loginSucces);
           if (this.loginSucces === true) {
+            this.unespectedError = false;
             this.router.navigate(['/home']);
           } else {
             this.showError = true;
@@ -102,6 +104,7 @@ export class LoginPage implements OnInit {
           console.log(data);
 
         }, error => {
+          this.unespectedError = true;
           console.log(error.status);
           console.log(error.error);
           console.log(error.headers);

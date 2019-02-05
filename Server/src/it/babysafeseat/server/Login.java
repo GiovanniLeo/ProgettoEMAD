@@ -21,6 +21,7 @@ import it.babysafeseat.database.Queries;
 public class Login extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Logger log;
+    private Utils utils = new Utils();
 
     public Login() {
         super();
@@ -51,10 +52,8 @@ public class Login extends HttpServlet {
             jsonResponse.append("found", "false");
         }
 
-        response.setHeader("Access-Control-Allow-Headers", "*");
-        response.setHeader("Access-Control-Allow-Origin","*");
-        response.setHeader("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS" );
-        response.setStatus(HttpServletResponse.SC_OK);
+
+        this.utils.setHeaders(response);
 
         response.getWriter().write(jsonResponse.toString());
     }
