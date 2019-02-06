@@ -6,6 +6,8 @@ import {Platform} from '@ionic/angular';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
+import {ConstantDbService} from '../services/constantDbService/constant-db.service';
+
 @Component({
     selector: 'app-signin',
     templateUrl: './signin.page.html',
@@ -17,7 +19,7 @@ export class SigninPage implements OnInit {
     formReg: FormGroup;
     response: String;
 
-    constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder, private http: HttpClient) {
+    constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder, private http: HttpClient, private constDB: ConstantDbService) {
         this.formReg = form.group({
             nome: ['', Validators.required],
             cognome: ['', Validators.required],
@@ -47,8 +49,9 @@ export class SigninPage implements OnInit {
     }
 
     checkRegistrazione() {
+
        // this.getPositionOnWeb(true);
-       this.http.post('http://192.168.1.10:8080/BabySafeSeatServer/Registrazione', this.formReg.value, {})
+       this.http.post('http://192.168.43.39:8080/BabySafeSeatServer/Registrazione', this.formReg.value, {})
            .subscribe(data => {
                 this.response = JSON.stringify(data);
                 console.log(this.response);

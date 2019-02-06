@@ -10,9 +10,8 @@ import {PermissionService} from '../services/perssionService/permission.service'
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ToastService} from '../services/toastService/toast.service';
 import {HttpClient} from '@angular/common/http';
-import {ConstantDbService} from '../services/constantDbService/constant-db.service';
 import { HttpHeaders } from '@angular/common/http';
-
+import { AuthService } from '../services/authService/autb-service.service';
 
 
 @Component({
@@ -39,7 +38,8 @@ export class LoginPage implements OnInit {
               private permissionService: PermissionService,
               private fb: FormBuilder,
               private http: HttpClient,
-              private constDB: ConstantDbService) {}
+              private auth: AuthService) {}
+
 
 
   ngOnInit() {
@@ -72,8 +72,6 @@ export class LoginPage implements OnInit {
     const valueToSubmit = {
       email: this.getEmail(),
       password: this.getPassword(),
-      latitude: this.lat,
-      longitude: this.long
     };
 
     const httpOptions = {
@@ -83,6 +81,7 @@ export class LoginPage implements OnInit {
       })
     };
 
+    /*
     const url = this.constDB.IP_ADR_PORT + '/Login';
 
     this.http.post( url , valueToSubmit, httpOptions).subscribe(
@@ -103,8 +102,22 @@ export class LoginPage implements OnInit {
           console.log(error.error);
           console.log(error.headers);
         });
-    console.log(valueToSubmit);
+        */
+    console.log('TO_SUBMIT : ' + valueToSubmit);
 
+    this.auth.loginUser(valueToSubmit.email, valueToSubmit.password)
+        .then(
+        authData => {
+          console.log("Added");
+        },
+        (error) => {
+          console.log(error.message);
+        });
+    /*
+    this.firebase.list('/users/').push({
+      "nome": "marco"
+    });
+    */
   }
 
 

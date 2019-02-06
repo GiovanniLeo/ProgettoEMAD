@@ -16,7 +16,7 @@ export class AppComponent {
       private splashScreen: SplashScreen,
       private statusBar: StatusBar,
       private fcm: FcmService,
-      private toastCtrl: ToastController,
+      private toastCtrl: ToastController
   ) {
     this.initializeApp();
   }
