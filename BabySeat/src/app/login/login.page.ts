@@ -37,11 +37,10 @@ export class LoginPage implements OnInit {
               private permissionService: PermissionService,
               private fb: FormBuilder,
               private http: HttpClient,
-              private auth: AuthService,
-              private firestore: AngularFirestore) {
+              private auth: AuthService) {
     this.logForm = fb.group({
-      email: ['', Validators.required],
-      password: ['', Validators.required]
+      email: ['', Validators.compose([Validators.required, Validators.email])],
+      password: ['', Validators.required, Validators.min(6)]
     });
   }
 

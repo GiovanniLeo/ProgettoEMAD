@@ -31,8 +31,8 @@ export class SigninPage implements OnInit {
         this.regForm = form.group({
             nome: ['', Validators.required],
             cognome: ['', Validators.required],
-            email: ['', Validators.required],
-            password: ['', Validators.required],
+            email: ['', Validators.compose([Validators.required, Validators.email])],
+            password: ['', Validators.compose([Validators.required, Validators.min(6)])],
             confermap: ['', Validators.required],
             ruolo: ['', Validators.required],
             citta: ['', Validators.required]
