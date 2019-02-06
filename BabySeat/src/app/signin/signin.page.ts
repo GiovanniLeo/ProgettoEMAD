@@ -7,6 +7,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 import {ConstantDbService} from '../services/constantDbService/constant-db.service';
+import {AuthService} from '../services/authService/autb-service.service';
 
 @Component({
     selector: 'app-signin',
@@ -19,7 +20,9 @@ export class SigninPage implements OnInit {
     formReg: FormGroup;
     response: String;
 
-    constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder, private http: HttpClient, private constDB: ConstantDbService) {
+    constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
+                private http: HttpClient, private constDB: ConstantDbService,
+                private auth: AuthService) {
         this.formReg = form.group({
             nome: ['', Validators.required],
             cognome: ['', Validators.required],
@@ -49,7 +52,7 @@ export class SigninPage implements OnInit {
     }
 
     checkRegistrazione() {
-
+        /*
        // this.getPositionOnWeb(true);
        this.http.post('http://192.168.43.39:8080/BabySafeSeatServer/Registrazione', this.formReg.value, {})
            .subscribe(data => {
@@ -61,6 +64,14 @@ export class SigninPage implements OnInit {
                console.log(error.headers);
            });
 
-
+*/
+        this.auth.signupUser(this.formReg.value.email, this.formReg.value.password)
+            .then(
+                authData => {
+                    console.log("Added");
+                },
+                (error) => {
+                    console.log(error.message);
+                });
     }
 }

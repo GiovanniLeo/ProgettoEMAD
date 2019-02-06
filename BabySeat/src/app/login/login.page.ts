@@ -12,7 +12,7 @@ import {ToastService} from '../services/toastService/toast.service';
 import {HttpClient} from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../services/authService/autb-service.service';
-
+import { Dialogs } from '@ionic-native/dialogs/ngx';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +38,8 @@ export class LoginPage implements OnInit {
               private permissionService: PermissionService,
               private fb: FormBuilder,
               private http: HttpClient,
-              private auth: AuthService) {}
+              private auth: AuthService,
+              private dialogs: Dialogs) {}
 
 
 
@@ -69,19 +70,7 @@ export class LoginPage implements OnInit {
     }
     this.getPositionOnDevice(false);
 
-    const valueToSubmit = {
-      email: this.getEmail(),
-      password: this.getPassword(),
-    };
-
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'my-auth-token'
-      })
-    };
-
-    /*
+     /*
     const url = this.constDB.IP_ADR_PORT + '/Login';
 
     this.http.post( url , valueToSubmit, httpOptions).subscribe(
@@ -103,15 +92,14 @@ export class LoginPage implements OnInit {
           console.log(error.headers);
         });
         */
-    console.log('TO_SUBMIT : ' + valueToSubmit);
 
-    this.auth.loginUser(valueToSubmit.email, valueToSubmit.password)
+    this.auth.loginUser(this.loginForm.value.email, this.loginForm.value.password)
         .then(
         authData => {
-          console.log("Added");
+          this.dialogs.alert('User logged!');
         },
         (error) => {
-          console.log(error.message);
+          this.dialogs.alert(error.message);
         });
     /*
     this.firebase.list('/users/').push({
@@ -174,17 +162,5 @@ export class LoginPage implements OnInit {
 
     });
   }
-
-  getEmail() {
-    return this.loginForm.get('email').value;
-  }
-
-  getPassword() {
-    return this.loginForm.get('password').value;
-  }
-
-
-
-
 
 }

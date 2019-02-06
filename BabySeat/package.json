@@ -29,6 +29,7 @@
     "@ionic-native/clipboard": "^5.0.0",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/diagnostic": "^5.0.0",
+    "@ionic-native/dialogs": "^5.0.0",
     "@ionic-native/firebase": "^5.0.0",
     "@ionic-native/geolocation": "^5.0.0",
     "@ionic-native/local-notifications": "^5.0.0",
@@ -39,6 +40,7 @@
     "@ionic/angular": "^4.0.0",
     "@ionic/storage": "^2.2.0",
     "cordova-android": "7.1.4",
+    "cordova-browser": "^5.0.4",
     "cordova-clipboard": "^1.2.1",
     "cordova-plugin-android-permissions": "^1.0.0",
     "cordova-plugin-background-mode": "^0.7.2",
@@ -46,6 +48,7 @@
     "cordova-plugin-ble-central": "^1.2.2",
     "cordova-plugin-compat": "^1.2.0",
     "cordova-plugin-device": "^2.0.2",
+    "cordova-plugin-dialogs": "2.0.1",
     "cordova-plugin-firebase": "^2.0.5",
     "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-ionic-keyboard": "^2.1.3",
@@ -127,10 +130,12 @@
       "cordova-plugin-firebase": {},
       "cordova-plugin-nativegeocoder": {},
       "cordova-clipboard": {},
-      "cordova-plugin-ble-central": {}
+      "cordova-plugin-ble-central": {},
+      "cordova-plugin-dialogs": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "browser"
     ]
   }
 }
