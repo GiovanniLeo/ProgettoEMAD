@@ -3,10 +3,11 @@ import {IonicSelectableComponent} from 'ionic-selectable';
 import {CityService} from '../services/cityService/city.service';
 import {City} from '../classes/City';
 import {Platform} from '@ionic/angular';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-
 import {ConstantDbService} from '../services/constantDbService/constant-db.service';
+import {Router} from '@angular/router';
+
 import {AuthService} from '../services/authService/autb-service.service';
 
 @Component({
@@ -18,11 +19,14 @@ export class SigninPage implements OnInit {
     city: City;
     cities: City[];
     formReg: FormGroup;
+    passwordWrong = false;
+    registrationSucces = false;
+    showError = false;
     response: String;
 
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
                 private http: HttpClient, private constDB: ConstantDbService,
-                private auth: AuthService) {
+                private auth: AuthService, private router: Router) {
         this.formReg = form.group({
             nome: ['', Validators.required],
             cognome: ['', Validators.required],
@@ -38,6 +42,7 @@ export class SigninPage implements OnInit {
         this.platform.ready().then((rdy) => {
             this.getCities();
         });
+
     }
 
     cityChanges(event: {component: IonicSelectableComponent, value: any}) {
@@ -53,25 +58,40 @@ export class SigninPage implements OnInit {
 
     checkRegistrazione() {
         /*
-       // this.getPositionOnWeb(true);
-       this.http.post('http://192.168.43.39:8080/BabySafeSeatServer/Registrazione', this.formReg.value, {})
-           .subscribe(data => {
-                this.response = JSON.stringify(data);
-                console.log(this.response);
-            }, error => {
-               console.log(error.status);
-               console.log(error.error);
-               console.log(error.headers);
+
+            console.log(valueToSubmit);
+            this.http.post(url, valueToSubmit, {})
+                .subscribe(data => {
+                    this.response = data;
+                    this.registrationSucces = this.response.added[0];
+                    if (this.registrationSucces === true) {
+                        this.showError = false;
+                        this.router.navigate(['/registration-succes']);
+                    } else {
+                        this.showError = true;
+                    }
+                }, error => {
+                    this.showError = true;
+                    console.log(error.status);
+                    console.log(error.error);
+                    console.log(error.headers);
+                });
+        }
            });
 
 */
-        this.auth.signupUser(this.formReg.value.email, this.formReg.value.password)
-            .then(
-                authData => {
-                    console.log("Added");
-                },
-                (error) => {
-                    console.log(error.message);
-                });
+        if (this.formReg.value.password !== this.formReg.value.confermap) {
+            this.passwordWrong = true;
+        } else {
+            this.passwordWrong = false;
+            this.auth.signupUser(this.formReg.value.email, this.formReg.value.password)
+                .then(
+                    authData => {
+                        console.log('Added');
+                    },
+                    (error) => {
+                        console.log(error.message);
+                    });
+        }
     }
 }

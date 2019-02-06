@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import {tap} from 'rxjs/operators';
 import {FcmService} from './services/fcmService/fcm.service';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -24,8 +25,9 @@ export class AppComponent {
   initializeApp() {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
+      this.statusBar.overlaysWebView(true);
       this.splashScreen.hide();
-      this.notificationSetUp();
+      // this.notificationSetUp();
     });
   }
 

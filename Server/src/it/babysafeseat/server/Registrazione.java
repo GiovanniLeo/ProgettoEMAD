@@ -22,6 +22,7 @@ import it.babysafeseat.database.Utente;
 public class Registrazione extends HttpServlet {
   private static final long serialVersionUID = 1L;
   private Logger log;
+  private Utils utils = new Utils();
 
   public Registrazione() {
     super();
@@ -29,7 +30,7 @@ public class Registrazione extends HttpServlet {
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    //la richiesta è ricevuta come oggetto JSON, dal quale è possibile recuperare e controllare i parametri
+    //la richiesta ï¿½ ricevuta come oggetto JSON, dal quale ï¿½ possibile recuperare e controllare i parametri
     String textRequest = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
     JSONObject jsonRequest = new JSONObject(textRequest);
     JSONObject jsonResponse = new JSONObject();
@@ -45,12 +46,14 @@ public class Registrazione extends HttpServlet {
 
 
     if(Queries.addUser(u)) {
-      log.info("Utente inserito!");   
+      log.info("Utente inserito!");
       jsonResponse.append("added", "true");
     } else {
       log.info("Problema con l'inserimento!");
       jsonResponse.append("added", "false");
     }
+
+    this.utils.setHeaders(response);
 
     response.getWriter().write(jsonResponse.toString());
 
@@ -59,7 +62,7 @@ public class Registrazione extends HttpServlet {
   //for Preflight
   @Override
   protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
+          throws ServletException, IOException {
     resp.setHeader("Access-Control-Allow-Headers", "*");
     resp.setHeader("Access-Control-Allow-Origin", "*");
     resp.setStatus(HttpServletResponse.SC_OK);

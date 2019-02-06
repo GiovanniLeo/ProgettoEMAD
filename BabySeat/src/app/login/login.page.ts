@@ -29,6 +29,7 @@ export class LoginPage implements OnInit {
   response;
   loginSucces = false;
   showError = false;
+  unespectedError = false;
 
 
   constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastService,
@@ -71,6 +72,23 @@ export class LoginPage implements OnInit {
     this.getPositionOnDevice(false);
 
      /*
+    const valueToSubmit = {
+      email: this.getEmail(),
+      password: this.getPassword(),
+      latitude: this.lat,
+      longitude: this.long
+    };
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'my-auth-token',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'DELETE, POST, GET, OPTIONS' ,
+        'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With'
+      })
+    };
+
     const url = this.constDB.IP_ADR_PORT + '/Login';
 
     this.http.post( url , valueToSubmit, httpOptions).subscribe(
@@ -79,6 +97,7 @@ export class LoginPage implements OnInit {
           this.loginSucces = this.response.found[0];
           console.log(this.loginSucces);
           if (this.loginSucces === true) {
+            this.unespectedError = false;
             this.router.navigate(['/home']);
           } else {
             this.showError = true;
@@ -87,6 +106,7 @@ export class LoginPage implements OnInit {
           console.log(data);
 
         }, error => {
+          this.unespectedError = true;
           console.log(error.status);
           console.log(error.error);
           console.log(error.headers);

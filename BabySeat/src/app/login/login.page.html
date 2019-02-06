@@ -31,8 +31,13 @@
   </form>
 
   <ion-row  *ngIf="showError" justify-content-center style="margin-top: 3%">
-    <ion-label style="color: red; text-align: center;">I dati inseriti non sono corretti, verifica i tuo dati e riprova.</ion-label>
+    <ion-label style="color: red; text-align: center; margin-left: 4%; margin-right: 4%">I dati inseriti non sono corretti, verifica i tuoi dati e riprova.</ion-label>
   </ion-row>
+
+  <ion-row  *ngIf="unespectedError" justify-content-center style="margin-top: 3%">
+    <ion-label style="color: red; text-align: center; margin-left: 4%; margin-right: 4%">Errore nel login, riprova.</ion-label>
+  </ion-row>
+
 
   <ion-row  justify-content-center style="margin-top: 3%">
     <span>Non sei registrato?</span>
