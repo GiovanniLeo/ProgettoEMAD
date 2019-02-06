@@ -5,6 +5,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import {tap} from 'rxjs/operators';
 import {FcmService} from './services/fcmService/fcm.service';
+import {AngularFireAuth} from '@angular/fire/auth';
+import {Router} from '@angular/router';
 
 
 @Component({
@@ -17,7 +19,9 @@ export class AppComponent {
       private splashScreen: SplashScreen,
       private statusBar: StatusBar,
       private fcm: FcmService,
-      private toastCtrl: ToastController
+      private toastCtrl: ToastController,
+      private auth: AngularFireAuth,
+      private router: Router
   ) {
     this.initializeApp();
   }
@@ -28,6 +32,16 @@ export class AppComponent {
       this.statusBar.overlaysWebView(true);
       this.splashScreen.hide();
       // this.notificationSetUp();
+    });
+
+    this.auth.authState.subscribe(user => {
+      if (user) {
+        this.router.navigate(['/home']);
+      } else {
+        this.router.navigate(['/login']);
+      }
+    }, () => {
+      this.router.navigate(['/login']);
     });
   }
 

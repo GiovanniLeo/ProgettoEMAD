@@ -56,7 +56,7 @@ export class LoginPage implements OnInit {
     });
   }
 
-  login() {
+  checkLogin() {
 
     if (this.webFlag) {
       this.getPositionOnWeb(false);

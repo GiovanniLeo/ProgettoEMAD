@@ -6,6 +6,7 @@ import {ConstantDbService} from '../services/constantDbService/constant-db.servi
 import {Router, RouterEvent} from '@angular/router';
 import {delay, filter} from 'rxjs/operators';
 import {BackgroundMode} from '@ionic-native/background-mode/ngx';
+import {AuthService} from '../services/authService/autb-service.service';
 
 
 
@@ -23,7 +24,7 @@ export class HomePage implements OnInit {
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
-                private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode) {
+                private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode, private auth: AuthService) {
 
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
@@ -97,4 +98,7 @@ export class HomePage implements OnInit {
         this.danger = false;
     }
 
+    logout() {
+        this.auth.logoutUser();
+    }
 }
