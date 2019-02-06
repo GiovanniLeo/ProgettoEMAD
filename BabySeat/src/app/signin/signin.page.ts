@@ -9,6 +9,7 @@ import {ConstantDbService} from '../services/constantDbService/constant-db.servi
 import {Router} from '@angular/router';
 
 import {AuthService} from '../services/authService/autb-service.service';
+import {Dialogs} from '@ionic-native/dialogs/ngx';
 
 @Component({
     selector: 'app-signin',
@@ -26,7 +27,7 @@ export class SigninPage implements OnInit {
 
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
                 private http: HttpClient, private constDB: ConstantDbService,
-                private auth: AuthService, private router: Router) {
+                private auth: AuthService, private router: Router, private dialogs: Dialogs) {
         this.formReg = form.group({
             nome: ['', Validators.required],
             cognome: ['', Validators.required],
@@ -57,29 +58,6 @@ export class SigninPage implements OnInit {
     }
 
     checkRegistrazione() {
-        /*
-
-            console.log(valueToSubmit);
-            this.http.post(url, valueToSubmit, {})
-                .subscribe(data => {
-                    this.response = data;
-                    this.registrationSucces = this.response.added[0];
-                    if (this.registrationSucces === true) {
-                        this.showError = false;
-                        this.router.navigate(['/registration-succes']);
-                    } else {
-                        this.showError = true;
-                    }
-                }, error => {
-                    this.showError = true;
-                    console.log(error.status);
-                    console.log(error.error);
-                    console.log(error.headers);
-                });
-        }
-           });
-
-*/
         if (this.formReg.value.password !== this.formReg.value.confermap) {
             this.passwordWrong = true;
         } else {
@@ -87,10 +65,13 @@ export class SigninPage implements OnInit {
             this.auth.signupUser(this.formReg.value.email, this.formReg.value.password)
                 .then(
                     authData => {
-                        console.log('Added');
+                        this.dialogs.alert('User added: ' + authData.toString());
+                        this.showError = false;
+                        this.router.navigate(['/registration-succes']);
                     },
                     (error) => {
-                        console.log(error.message);
+                        this.dialogs.alert('Error!');
+                        this.showError = true;
                     });
         }
     }
