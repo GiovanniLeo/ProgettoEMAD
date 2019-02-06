@@ -13,6 +13,7 @@ import {HttpClient} from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../services/authService/autb-service.service';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-login',
@@ -21,16 +22,13 @@ import { Dialogs } from '@ionic-native/dialogs/ngx';
 })
 export class LoginPage implements OnInit {
 
-  webFlag = true;
-  loginForm: FormGroup;
-  email: FormControl;
-  password: FormControl;
+  logForm: FormGroup;
   lat; long;
-  response;
+  response: String;
   loginSucces = false;
   showError = false;
   unespectedError = false;
-
+  webFlag = true;
 
   constructor(private geolocation: Geolocation, private router: Router, private toastController: ToastService,
               private backGround: BackgroundMode, private platform: Platform,
@@ -40,7 +38,12 @@ export class LoginPage implements OnInit {
               private fb: FormBuilder,
               private http: HttpClient,
               private auth: AuthService,
-              private dialogs: Dialogs) {}
+              private firestore: AngularFirestore) {
+    this.logForm = fb.group({
+      email: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
 
 
 
@@ -52,16 +55,6 @@ export class LoginPage implements OnInit {
       this.permissionService.requestGPSpermission();
       this.getPositionOnDevice(false);
     });
-    // this.backGround.enable();
-    this.loginForm = this.fb.group({
-      email: [this.email, [
-        Validators.required,
-        Validators.email
-      ]],
-      password: [this.password, [
-        Validators.required
-      ]]
-    });
   }
 
   login() {
@@ -71,24 +64,17 @@ export class LoginPage implements OnInit {
     }
     this.getPositionOnDevice(false);
 
-    this.auth.loginUser(this.loginForm.value.email, this.loginForm.value.password)
+    this.auth.loginUser(this.logForm.value.email, this.logForm.value.password)
         .then(
         authData => {
-          this.dialogs.alert('User logged!');
           this.unespectedError = false;
           this.router.navigate(['/home']);
         },
         (error) => {
-          this.dialogs.alert(error.message);
           this.showError = true;
           this.unespectedError = true;
         });
-    /*
-    this.firebase.list('/users/').push({
-      "nome": "marco"
-    });
-    */
-  }
+   }
 
 
 

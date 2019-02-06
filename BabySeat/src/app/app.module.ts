@@ -22,10 +22,8 @@ import {BLE} from '@ionic-native/ble/ngx';
 import {Firebase} from '@ionic-native/firebase/ngx';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
-
-import {ReactiveFormsModule} from '@angular/forms';
-import {AngularFireDatabaseModule} from '@angular/fire/database';
 import {AngularFireAuth} from '@angular/fire/auth';
+
 import { AuthService } from './services/authService/autb-service.service';
 
 import { Dialogs } from '@ionic-native/dialogs/ngx';
@@ -44,8 +42,7 @@ const firebaseConfig = {
     declarations: [AppComponent],
     entryComponents: [],
     imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),
-        AngularFireModule.initializeApp(firebaseConfig),
-        AngularFireDatabaseModule, HttpClientModule, AngularFirestoreModule],
+        AngularFireModule.initializeApp(firebaseConfig), HttpClientModule, AngularFirestoreModule],
     providers: [
         StatusBar,
         SplashScreen,
@@ -61,6 +58,7 @@ const firebaseConfig = {
         Firebase,
         AngularFireAuth,
         AuthService,
+        AngularFirestoreModule,
         Dialogs
     ],
     bootstrap: [AppComponent]

@@ -10,6 +10,7 @@ import {Router} from '@angular/router';
 
 import {AuthService} from '../services/authService/autb-service.service';
 import {Dialogs} from '@ionic-native/dialogs/ngx';
+import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 
 @Component({
     selector: 'app-signin',
@@ -17,18 +18,17 @@ import {Dialogs} from '@ionic-native/dialogs/ngx';
     styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
+    regForm: FormGroup;
     city: City;
     cities: City[];
-    formReg: FormGroup;
-    passwordWrong = false;
-    registrationSucces = false;
     showError = false;
     response: String;
+    users: AngularFirestoreCollection;
 
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
                 private http: HttpClient, private constDB: ConstantDbService,
-                private auth: AuthService, private router: Router, private dialogs: Dialogs) {
-        this.formReg = form.group({
+                private auth: AuthService, private router: Router, private dialogs: Dialogs, private firestore: AngularFirestore) {
+        this.regForm = form.group({
             nome: ['', Validators.required],
             cognome: ['', Validators.required],
             email: ['', Validators.required],
@@ -58,21 +58,45 @@ export class SigninPage implements OnInit {
     }
 
     checkRegistrazione() {
-        if (this.formReg.value.password !== this.formReg.value.confermap) {
-            this.passwordWrong = true;
+        if (this.registerUser()) {
+            this.showError = false;
+            this.router.navigate(['/registration-succes']);
         } else {
-            this.passwordWrong = false;
-            this.auth.signupUser(this.formReg.value.email, this.formReg.value.password)
-                .then(
-                    authData => {
-                        this.dialogs.alert('User added: ' + authData.toString());
-                        this.showError = false;
-                        this.router.navigate(['/registration-succes']);
-                    },
-                    (error) => {
-                        this.dialogs.alert('Error!');
-                        this.showError = true;
-                    });
+            this.showError = true;
         }
+
+    }
+
+    registerUser() {
+
+        const nome = this.regForm.value.nome;
+        const cognome = this.regForm.value.cognome;
+        const password = this.regForm.value.password;
+        const confermaPassword = this.regForm.value.confermap;
+        const email = this.regForm.value.email;
+        const citta = this.regForm.value.citta;
+        const ruolo = this.regForm.value.ruolo === '0' ? 'Au' : 'An';
+
+        if (password !== confermaPassword) {
+            return false;
+        }
+
+        this.auth.signupUser(this.regForm.value.email, this.regForm.value.password).then(
+            authData => {
+                this.users = this.firestore.collection<any>('users');
+                this.users.add({
+                            'nome': nome,
+                            'cognome': cognome,
+                            'email': email,
+                            'password': password,
+                            'ruolo': ruolo,
+                            'citta': citta
+                            });
+                },
+            (error) => {
+                        console.log(error.message);
+                        return false;
+                    });
+        return true;
     }
 }
