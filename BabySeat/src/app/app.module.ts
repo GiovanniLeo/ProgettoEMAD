@@ -56,6 +56,7 @@ const firebaseConfig = {
         Clipboard,
         BLE,
         Firebase,
+
         AngularFireAuth,
         AuthService,
         AngularFirestoreModule,
