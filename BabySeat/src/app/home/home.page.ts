@@ -7,6 +7,8 @@ import {Router, RouterEvent} from '@angular/router';
 import {delay, filter} from 'rxjs/operators';
 import {BackgroundMode} from '@ionic-native/background-mode/ngx';
 import {AuthService} from '../services/authService/autb-service.service';
+import {AngularFireAuth} from '@angular/fire/auth';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 
 
@@ -16,6 +18,7 @@ import {AuthService} from '../services/authService/autb-service.service';
     styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
+    user: Firebase.User;
     threshold = 2;
     danger = true;
     timer: number;
@@ -24,7 +27,21 @@ export class HomePage implements OnInit {
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
-                private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode, private auth: AuthService) {
+                private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
+                private authService: AuthService,
+                private auth: AngularFireAuth,
+                private firestore: AngularFirestore) {
+
+        this.auth.authState.subscribe(user => {
+            if (!user) {
+                this.router.navigate(['/login']);
+            } else {
+                this.user = user;
+            }
+        }, () => {
+            this.router.navigate(['/login']);
+        });
+
 
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
@@ -50,12 +67,9 @@ export class HomePage implements OnInit {
     }
 
     sendNotification(message: string) {
-        this.localNotification.schedule(
-            {
-                id: 1,
-                title: message,
-            }
-        );
+        const device = this.firestore.collection('devices', ref => ref.where('userId', '==', this.user.email)).get();
+        console.log(device);
+
     }
 
     checkThreshold(threshold: number): void {
@@ -99,6 +113,6 @@ export class HomePage implements OnInit {
     }
 
     logout() {
-        this.auth.logoutUser();
+        this.authService.logoutUser();
     }
 }

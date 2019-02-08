@@ -18,22 +18,12 @@ export class AppComponent {
       private platform: Platform,
       private splashScreen: SplashScreen,
       private statusBar: StatusBar,
-      private fcm: FcmService,
       private toastCtrl: ToastController,
       private auth: AngularFireAuth,
       private router: Router
   ) {
-    this.initializeApp();
-  }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.statusBar.overlaysWebView(true);
-      this.splashScreen.hide();
-      // this.notificationSetUp();
-    });
-
+    // check if logged
     this.auth.authState.subscribe(user => {
       if (user) {
         this.router.navigate(['/home']);
@@ -43,20 +33,18 @@ export class AppComponent {
     }, () => {
       this.router.navigate(['/login']);
     });
+
+    this.initializeApp();
   }
 
-  notificationSetUp() {
-    this.fcm.getToken();
-
-    // Listen to incoming messages
-    this.fcm.listenToNotifications().pipe(
-        tap(msg => {
-          // show a toast
-          this.presentToast(msg.body);
-        })
-    )
-        .subscribe();
+  initializeApp() {
+    this.platform.ready().then(() => {
+      this.statusBar.styleDefault();
+      this.statusBar.overlaysWebView(true);
+      this.splashScreen.hide();
+    });
   }
+
 
   private async presentToast(message) {
     const toast = await this.toastCtrl.create({

@@ -7,7 +7,7 @@ const routes: Routes = [
   { path: 'signin', loadChildren: './signin/signin.module#SigninPageModule' },
   { path: 'selectUser', loadChildren: './select-user/select-user.module#SelectUserPageModule' },
   { path: 'configuration', loadChildren: './configuration/configuration.module#ConfigurationPageModule' },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  { path: 'map-view', loadChildren: './map-view/map-view.module#MapViewPageModule' },
+  { path: 'map-view', loadChildren: './map-view/map-view.module#MapViewPageModule' },
   { path: 'ble-connet', loadChildren: './ble-connet/ble-connet.module#BleConnetPageModule' },
   { path: 'registration-succes', loadChildren: './registration-succes/registration-succes.module#RegistrationSuccesPageModule' }
 
