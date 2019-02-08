@@ -6,6 +6,10 @@ import {ConstantDbService} from '../services/constantDbService/constant-db.servi
 import {Router, RouterEvent} from '@angular/router';
 import {delay, filter} from 'rxjs/operators';
 import {BackgroundMode} from '@ionic-native/background-mode/ngx';
+import {AuthService} from '../services/authService/autb-service.service';
+import {AngularFireAuth} from '@angular/fire/auth';
+import {AngularFirestore} from '@angular/fire/firestore';
+import {Firebase} from '@ionic-native/firebase';
 
 
 
@@ -23,7 +27,19 @@ export class HomePage implements OnInit {
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
-                private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode) {
+                private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
+                private authService: AuthService,
+                private auth: AngularFireAuth,
+                private firestore: AngularFirestore) {
+
+        this.auth.authState.subscribe(user => {
+            if (!user) {
+                this.router.navigate(['/login']);
+            }
+        }, () => {
+            this.router.navigate(['/login']);
+        });
+
 
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
@@ -49,12 +65,12 @@ export class HomePage implements OnInit {
     }
 
     sendNotification(message: string) {
-        this.localNotification.schedule(
-            {
-                id: 1,
-                title: message,
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                const device = this.firestore.collection('devices', ref => ref.where('userId', '==', user.email)).get();
+                console.log(device);
             }
-        );
+        });
     }
 
     checkThreshold(threshold: number): void {
@@ -97,4 +113,7 @@ export class HomePage implements OnInit {
         this.danger = false;
     }
 
+    logout() {
+        this.authService.logoutUser();
+    }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Firebase} from '@ionic-native/firebase/ngx';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Platform} from '@ionic/angular';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,8 @@ export class FcmService {
   constructor(
       private firebaseNative: Firebase,
       private afs: AngularFirestore,
-      private platform: Platform
+      private platform: Platform,
+      private auth: AngularFireAuth
   ) { }
 
 
@@ -41,15 +43,28 @@ export class FcmService {
 
     const devicesRef = this.afs.collection('devices');
 
-    const docData = {
-      token,
-      userId: 'testUser',
+    let idUser: String;
+
+    this.auth.user.subscribe((user) => {
+          if (user === null || user === undefined) {
+            return;
+          }
+
+          idUser = user.email;
+
+          const docData = {
+            token,
+          userId: idUser,
     };
 
-    return devicesRef.doc(token).set(docData);
+      return devicesRef.doc(token).set(docData);
+    }, (error) => {
+      console.log(error.message);
+    });
+
   }
 
-// Listen to incoming FCM messages
+  // Listen to incoming FCM messages
   listenToNotifications() {
     return this.firebaseNative.onNotificationOpen();
   }

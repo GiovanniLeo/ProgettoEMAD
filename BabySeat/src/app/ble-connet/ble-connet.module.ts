@@ -2,26 +2,25 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+
 import { IonicModule } from '@ionic/angular';
-import { LoginPage } from './login.page';
+
+import { BleConnetPage } from './ble-connet.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: LoginPage
+    component: BleConnetPage
   }
 ];
-
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes),
-    ReactiveFormsModule
+    RouterModule.forChild(routes)
   ],
-  declarations: [LoginPage]
+  declarations: [BleConnetPage]
 })
-export class LoginPageModule {}
+export class BleConnetPageModule {}

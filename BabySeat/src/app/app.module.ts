@@ -14,34 +14,55 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
+
+import {Clipboard} from '@ionic-native/clipboard/ngx';
+import {HttpClientModule} from '@angular/common/http';
+import {BLE} from '@ionic-native/ble/ngx';
+
 import {Firebase} from '@ionic-native/firebase/ngx';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
-import {environment} from '../environments/environment';
-import {Clipboard} from '@ionic-native/clipboard/ngx';
-import {HttpClientModule} from '@angular/common/http';
+import {AngularFireAuth} from '@angular/fire/auth';
+
+import { AuthService } from './services/authService/autb-service.service';
+
+import { Dialogs } from '@ionic-native/dialogs/ngx';
+
+const firebaseConfig = {
+    apiKey: 'AIzaSyAIuPrsm12hFk7aeLdDtiy6C8hA0L4O5zc',
+    authDomain: 'babysafeseat-6b42d.firebaseapp.com',
+    databaseURL: 'https://babysafeseat-6b42d.firebaseio.com',
+    projectId: 'babysafeseat-6b42d',
+    storageBucket: 'babysafeseat-6b42d.appspot.com',
+    messagingSenderId: '324381377216'
+};
 
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),
-    AngularFireModule.initializeApp(environment.firebase), AngularFirestoreModule,
-    HttpClientModule],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    LocalNotifications,
-    AndroidPermissions,
-    Geolocation,
-    BackgroundMode,
-    Diagnostic,
-    LocationAccuracy,
-    Firebase,
-    Clipboard
-  ],
-  bootstrap: [AppComponent]
+    declarations: [AppComponent],
+    entryComponents: [],
+    imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),
+        AngularFireModule.initializeApp(firebaseConfig), HttpClientModule, AngularFirestoreModule],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        LocalNotifications,
+        AndroidPermissions,
+        Geolocation,
+        BackgroundMode,
+        Diagnostic,
+        LocationAccuracy,
+        Clipboard,
+        BLE,
+        Firebase,
+
+        AngularFireAuth,
+        AuthService,
+        AngularFirestoreModule,
+        Dialogs
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}
 
