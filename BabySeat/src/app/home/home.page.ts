@@ -9,6 +9,7 @@ import {BackgroundMode} from '@ionic-native/background-mode/ngx';
 import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {Firebase} from '@ionic-native/firebase';
 
 
 
@@ -18,7 +19,6 @@ import {AngularFirestore} from '@angular/fire/firestore';
     styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-    user: Firebase.User;
     threshold = 2;
     danger = true;
     timer: number;
@@ -35,8 +35,6 @@ export class HomePage implements OnInit {
         this.auth.authState.subscribe(user => {
             if (!user) {
                 this.router.navigate(['/login']);
-            } else {
-                this.user = user;
             }
         }, () => {
             this.router.navigate(['/login']);
@@ -67,9 +65,12 @@ export class HomePage implements OnInit {
     }
 
     sendNotification(message: string) {
-        const device = this.firestore.collection('devices', ref => ref.where('userId', '==', this.user.email)).get();
-        console.log(device);
-
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                const device = this.firestore.collection('devices', ref => ref.where('userId', '==', user.email)).get();
+                console.log(device);
+            }
+        });
     }
 
     checkThreshold(threshold: number): void {
