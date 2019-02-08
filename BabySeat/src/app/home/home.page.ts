@@ -9,7 +9,8 @@ import {BackgroundMode} from '@ionic-native/background-mode/ngx';
 import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {Firebase} from '@ionic-native/firebase';
+import {BleService} from '../services/bleService/ble.service';
+
 
 
 
@@ -30,7 +31,8 @@ export class HomePage implements OnInit {
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
-                private firestore: AngularFirestore) {
+                private firestore: AngularFirestore,
+                private bleSer: BleService) {
 
         this.auth.authState.subscribe(user => {
             if (!user) {
@@ -44,6 +46,7 @@ export class HomePage implements OnInit {
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
             this.checkThreshold(this.threshold);
+            this.bleSer.checkBluetoothSignal();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer

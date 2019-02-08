@@ -21,6 +21,7 @@ export class AppComponent {
       private toastCtrl: ToastController,
       private auth: AngularFireAuth,
       private router: Router
+
   ) {
 
     // check if logged
