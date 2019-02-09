@@ -10,7 +10,7 @@ import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {BleService} from '../services/bleService/ble.service';
-import {AngularFireDatabase} from '@angular/fire/database';
+import * as admin from 'firebase-admin';
 
 
 
@@ -35,7 +35,6 @@ export class HomePage implements OnInit {
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
-                private db: AngularFireDatabase,
                 private bleSer: BleService,
                 private firestore: AngularFirestore) {
 
@@ -75,12 +74,42 @@ export class HomePage implements OnInit {
         // this.checkRole(this.role);
     }
 
+    getRole() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                userDoc.subscribe( us => {
+                    const role = us.get('ruolo');
+                    console.log(role);
+                    return role;
+                }, error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+    }
+
+
     sendNotification(message: string) {
 
         this.auth.authState.subscribe(user => {
             if (user) {
-                const device = this.db.object('/devices/' + user.uid);
-                console.log(device);
+                // Notification content
+                const payload = {
+                    notification: {
+                        title: 'Ciao!',
+                        body: `Bell!`,
+                        icon: 'https://goo.gl/Fz9nrQ'
+                    }
+                };
+
+                const device = this.firestore.doc<any>('devices/' + user.uid).get();
+                device.subscribe(tokenUser => {
+                    const token = tokenUser.get('token');
+                }, error => {
+                    console.log(error.message);
+                });
             } else {
                 console.log('Cannot send notification');
             }
@@ -99,7 +128,6 @@ export class HomePage implements OnInit {
             document.getElementById('send').click();
         }
     }
-
 
 
     instialState() {

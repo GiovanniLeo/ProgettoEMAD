@@ -27,7 +27,6 @@ export class SigninPage implements OnInit {
     cities: City[];
     showError = false;
     response: String;
-    users: AngularFirestoreCollection;
 
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
                 private http: HttpClient, private constDB: ConstantDbService,
@@ -39,7 +38,7 @@ export class SigninPage implements OnInit {
             cognome: ['', Validators.required],
             email: ['', Validators.compose([Validators.required, Validators.email])],
             password: ['', Validators.compose([Validators.required, Validators.min(6)])],
-            confermap: ['', Validators.required],
+            confermap: ['', Validators.compose([Validators.required, Validators.min(6)])],
             ruolo: ['', Validators.required],
             citta: ['', Validators.required]
         });
@@ -77,17 +76,19 @@ export class SigninPage implements OnInit {
         if (nome === null || cognome === null || password === null ||
             confermaPassword === null || email === null || citta === null ||
             ruolo === null) {
-            return false;
+            this.showError = true;
+            return;
         } else if (password.length < 6) {
-            return false;
+            this.showError = true;
+            return;
         } else if (password !== confermaPassword) {
-            return false;
+            this.showError = true;
+            return;
         } else {
             console.log('Tutto secondo i piani');
             this.auth.signupUser(this.regForm.value.email, this.regForm.value.password).then(
                 authData => {
-                    this.users = this.firestore.collection<any>('users');
-                    this.users.add({
+                    const users = this.firestore.doc('users/' + authData.user.uid).set({
                         'nome': nome,
                         'cognome': cognome,
                         'email': email,

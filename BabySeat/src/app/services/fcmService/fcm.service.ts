@@ -46,16 +46,16 @@ export class FcmService {
     let idUser: string;
 
     this.auth.user.subscribe((user) => {
-          if (user === null || user === undefined) {
-            return;
-          }
+      if (user === null || user === undefined) {
+        return;
+      }
 
-          idUser = user.email;
+      idUser = user.email;
 
-          const docData = {
-            token,
-          userId: idUser,
-    };
+      const docData = {
+        token,
+        userId: idUser,
+      };
 
       return devicesRef.doc(user.uid).set(docData);
     }, (error) => {
