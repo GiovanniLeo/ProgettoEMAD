@@ -32,7 +32,7 @@ export class HomePage implements OnInit {
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
-                private db: AngularFireDatabase) {
+                private db: AngularFireDatabase,
                 private bleSer: BleService) {
 
         this.auth.authState.subscribe(user => {
