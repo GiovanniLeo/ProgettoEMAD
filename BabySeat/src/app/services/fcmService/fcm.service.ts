@@ -43,7 +43,7 @@ export class FcmService {
 
     const devicesRef = this.afs.collection('devices');
 
-    let idUser: String;
+    let idUser: string;
 
     this.auth.user.subscribe((user) => {
           if (user === null || user === undefined) {
@@ -57,7 +57,7 @@ export class FcmService {
           userId: idUser,
     };
 
-      return devicesRef.doc(token).set(docData);
+      return devicesRef.doc(user.uid).set(docData);
     }, (error) => {
       console.log(error.message);
     });

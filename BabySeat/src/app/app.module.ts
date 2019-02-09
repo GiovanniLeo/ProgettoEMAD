@@ -27,6 +27,7 @@ import {AngularFireAuth} from '@angular/fire/auth';
 import { AuthService } from './services/authService/autb-service.service';
 
 import { Dialogs } from '@ionic-native/dialogs/ngx';
+import {AngularFireDatabaseModule} from '@angular/fire/database';
 
 const firebaseConfig = {
     apiKey: 'AIzaSyAIuPrsm12hFk7aeLdDtiy6C8hA0L4O5zc',
@@ -42,7 +43,7 @@ const firebaseConfig = {
     declarations: [AppComponent],
     entryComponents: [],
     imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),
-        AngularFireModule.initializeApp(firebaseConfig), HttpClientModule, AngularFirestoreModule],
+        AngularFireModule.initializeApp(firebaseConfig), HttpClientModule, AngularFirestoreModule, AngularFireDatabaseModule],
     providers: [
         StatusBar,
         SplashScreen,

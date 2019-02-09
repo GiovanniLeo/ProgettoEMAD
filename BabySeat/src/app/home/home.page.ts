@@ -10,6 +10,7 @@ import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {BleService} from '../services/bleService/ble.service';
+import {AngularFireDatabase} from '@angular/fire/database';
 
 
 
@@ -31,14 +32,15 @@ export class HomePage implements OnInit {
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
-                private firestore: AngularFirestore,
+                private db: AngularFireDatabase) {
                 private bleSer: BleService) {
 
         this.auth.authState.subscribe(user => {
             if (!user) {
                 this.router.navigate(['/login']);
             }
-        }, () => {
+        }, (error) => {
+            console.log(error.message);
             this.router.navigate(['/login']);
         });
 
@@ -68,12 +70,21 @@ export class HomePage implements OnInit {
     }
 
     sendNotification(message: string) {
+
         this.auth.authState.subscribe(user => {
             if (user) {
-                const device = this.firestore.collection('devices', ref => ref.where('userId', '==', user.email)).get();
+                const device = this.db.object('/devices/' + user.uid);
                 console.log(device);
+            } else {
+                console.log('Cannot send notification');
             }
+        }, (error) => {
+            console.log(error.message);
         });
+
+
+
+
     }
 
     checkThreshold(threshold: number): void {
@@ -98,7 +109,7 @@ export class HomePage implements OnInit {
         });
     }
 
-     startProgresBar() {
+    startProgresBar() {
         const progres = (100 / this.timer) / 100;
         const intervalId = setInterval(() => {
             if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
