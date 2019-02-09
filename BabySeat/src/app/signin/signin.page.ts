@@ -76,11 +76,14 @@ export class SigninPage implements OnInit {
         if (nome === null || cognome === null || password === null ||
             confermaPassword === null || email === null || citta === null ||
             ruolo === null) {
-            return false;
+            this.showError = true;
+            return;
         } else if (password.length < 6) {
-            return false;
+            this.showError = true;
+            return;
         } else if (password !== confermaPassword) {
-            return false;
+            this.showError = true;
+            return;
         } else {
             this.auth.signupUser(this.regForm.value.email, this.regForm.value.password).then(
                 authData => {
