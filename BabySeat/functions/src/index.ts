@@ -6,7 +6,7 @@ import * as functions from 'firebase-functions';
 // export const helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
-
+/*
 import * as admin from 'firebase-admin';
 admin.initializeApp();
 
@@ -54,3 +54,4 @@ exports.sendNotification = functions.firestore
 
     });
 
+*/

@@ -65,6 +65,23 @@ export class HomePage implements OnInit {
         console.log('Init');
     }
 
+    getRole() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                userDoc.subscribe( us => {
+                    const role = us.get('ruolo');
+                    console.log(role);
+                    return role;
+                }, error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+    }
+
+
     sendNotification(message: string) {
 
         this.auth.authState.subscribe(user => {
@@ -81,10 +98,6 @@ export class HomePage implements OnInit {
                 const device = this.firestore.doc<any>('devices/' + user.uid).get();
                 device.subscribe(tokenUser => {
                     const token = tokenUser.get('token');
-
-
-
-                    admin.messaging().sendToDevice(token, payload);
                 }, error => {
                     console.log(error.message);
                 });

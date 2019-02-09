@@ -27,7 +27,6 @@ export class SigninPage implements OnInit {
     cities: City[];
     showError = false;
     response: String;
-    users: AngularFirestoreCollection;
 
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
                 private http: HttpClient, private constDB: ConstantDbService,
@@ -85,8 +84,7 @@ export class SigninPage implements OnInit {
         } else {
             this.auth.signupUser(this.regForm.value.email, this.regForm.value.password).then(
                 authData => {
-                    this.users = this.firestore.collection<any>('users');
-                    this.users.add({
+                    const users = this.firestore.doc('users/' + authData.user.uid).set({
                         'nome': nome,
                         'cognome': cognome,
                         'email': email,
