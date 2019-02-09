@@ -2,6 +2,7 @@
     <ion-toolbar>
         <ion-back-button defaultHref="/login" slot="start"></ion-back-button>
         <ion-title>Home</ion-title>
+        <ion-icon slot="end" style="zoom:1.5;" (click)="logout()" name="log-out"></ion-icon>
     </ion-toolbar>
 </ion-header>
 
@@ -15,14 +16,25 @@
 
     <ion-progress-bar *ngIf="this.danger" color="danger" style="margin-top: 8%" value="{{this.value}}">
     </ion-progress-bar>
-    <label>{{this.value}}</label>
 
-    <ion-button (click)="sendNotification('Bambino Dimenticato')" routerLink="/configuration">Send Notification</ion-button>
+    <ion-list>
+        <ion-item *ngIf="isAutista">
+            <ion-label>Configurazione</ion-label>
+            <ion-button slot="end" routerLink="/configuration">Vai</ion-button>
+        </ion-item>
+        <ion-item *ngIf="isAngelo">
+            <ion-label>Mappa</ion-label>
+            <ion-button slot="end" routerLink="/map-view">Vai</ion-button>
+        </ion-item>
+        <ion-item *ngIf="isAutista">
+            <ion-label>Connessione Bluetooth</ion-label>
+            <ion-button slot="end" routerLink="/ble-connet">Vai</ion-button>
+        </ion-item>
+    </ion-list>
+
     <ion-button id="send" style="display: none" (click)="sendNotification()">Send Notification</ion-button>
     <ion-button (click)="startProgresBar('Bambino Dimenticato')" >Start P</ion-button>
     <ion-button (click)="stopProgress()" >Stop P</ion-button>
-    <ion-button  routerLink="/map-view">Vedi mappa</ion-button>
-    <ion-button  routerLink="/ble-connet">Connessione</ion-button>
     <ion-button (click)="logout()">Esci</ion-button>
 
 </ion-content>

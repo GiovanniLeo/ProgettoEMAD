@@ -96,7 +96,7 @@ export class SigninPage implements OnInit {
                         'citta': citta
                     });
 
-                   // this.notificationSetup();
+                    this.notificationSetup();
                     this.showError = false;
                     this.router.navigate(['/registration-succes']);
                 }

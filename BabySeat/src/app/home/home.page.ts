@@ -22,10 +22,13 @@ import {AngularFireDatabase} from '@angular/fire/database';
 })
 export class HomePage implements OnInit {
     threshold = 2;
-    danger = true;
+    danger = false;
     timer: number;
     value: number;
     stopProgres = false;
+    role;
+    isAutista = false;
+    isAngelo = false;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
@@ -33,7 +36,8 @@ export class HomePage implements OnInit {
                 private authService: AuthService,
                 private auth: AngularFireAuth,
                 private db: AngularFireDatabase,
-                private bleSer: BleService) {
+                private bleSer: BleService,
+                private firestore: AngularFirestore) {
 
         this.auth.authState.subscribe(user => {
             if (!user) {
@@ -67,6 +71,8 @@ export class HomePage implements OnInit {
     ngOnInit(): void {
         this.instialState();
         console.log('Init');
+        this.getRole();
+        // this.checkRole(this.role);
     }
 
     sendNotification(message: string) {
@@ -130,4 +136,30 @@ export class HomePage implements OnInit {
     logout() {
         this.authService.logoutUser();
     }
+
+    getRole() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log(user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + '15ucc8DiMd9uXSg4NIjp').get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    const role = us.get('ruolo');
+                    this.checkRole(role);
+                });
+            }
+        });
+    }
+
+    checkRole(role: String) {
+        console.log(role + '-----');
+        if (role === this.constDb.AUTISTA ) {
+            this.isAutista = true;
+        } else {
+            this.isAngelo = true;
+        }
+    }
+
+
 }
