@@ -10,7 +10,7 @@ import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {BleService} from '../services/bleService/ble.service';
-import * as admin from 'firebase-admin';
+
 
 
 
@@ -71,25 +71,8 @@ export class HomePage implements OnInit {
         this.instialState();
         console.log('Init');
         this.getRole();
-        // this.checkRole(this.role);
-    }
 
-    getRole() {
-        this.auth.authState.subscribe(user => {
-            if (user) {
-                console.log('uid: ' + user.uid);
-                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
-                userDoc.subscribe( us => {
-                    const role = us.get('ruolo');
-                    console.log(role);
-                    return role;
-                }, error1 => {
-                    console.log(error1.message);
-                });
-            }
-        });
     }
-
 
     sendNotification(message: string) {
 
@@ -168,13 +151,15 @@ export class HomePage implements OnInit {
     getRole() {
         this.auth.authState.subscribe(user => {
             if (user) {
-                console.log(user.uid);
-                const userDoc = this.firestore.doc<any>('users/' + '15ucc8DiMd9uXSg4NIjp').get();
+                  console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
                 // console.log(user.uid);
                 userDoc.subscribe( us => {
                     // console.log(us);
                     const role = us.get('ruolo');
                     this.checkRole(role);
+                } , error1 => {
+                    console.log(error1.message);
                 });
             }
         });
@@ -184,8 +169,10 @@ export class HomePage implements OnInit {
         console.log(role + '-----');
         if (role === this.constDb.AUTISTA ) {
             this.isAutista = true;
+            this.isAngelo = false;
         } else {
             this.isAngelo = true;
+            this.isAutista = false;
         }
     }
 
