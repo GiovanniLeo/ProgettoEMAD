@@ -40,7 +40,7 @@ export class LoginPage implements OnInit {
               private auth: AuthService) {
     this.logForm = fb.group({
       email: ['', Validators.compose([Validators.required, Validators.email])],
-      password: ['', Validators.required, Validators.min(6)]
+      password: ['', Validators.compose([Validators.required, Validators.minLength(6)])]
     });
   }
 
