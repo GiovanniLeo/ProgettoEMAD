@@ -9,8 +9,7 @@ import {BackgroundMode} from '@ionic-native/background-mode/ngx';
 import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {Firebase} from '@ionic-native/firebase';
-import {AngularFireDatabase} from '@angular/fire/database';
+import * as admin from 'firebase-admin';
 
 
 
@@ -31,7 +30,7 @@ export class HomePage implements OnInit {
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
-                private db: AngularFireDatabase) {
+                private firestore: AngularFirestore) {
 
         this.auth.authState.subscribe(user => {
             if (!user) {
@@ -70,8 +69,25 @@ export class HomePage implements OnInit {
 
         this.auth.authState.subscribe(user => {
             if (user) {
-                const device = this.db.object('/devices/' + user.uid);
-                console.log(device);
+                // Notification content
+                const payload = {
+                    notification: {
+                        title: 'Ciao!',
+                        body: `Bell!`,
+                        icon: 'https://goo.gl/Fz9nrQ'
+                    }
+                };
+
+                const device = this.firestore.doc<any>('devices/' + user.uid).get();
+                device.subscribe(tokenUser => {
+                    const token = tokenUser.get('token');
+
+
+
+                    admin.messaging().sendToDevice(token, payload);
+                }, error => {
+                    console.log(error.message);
+                });
             } else {
                 console.log('Cannot send notification');
             }
@@ -90,7 +106,6 @@ export class HomePage implements OnInit {
             document.getElementById('send').click();
         }
     }
-
 
 
     instialState() {

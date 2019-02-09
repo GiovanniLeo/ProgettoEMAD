@@ -1,8 +1,6 @@
 {
   "name": "BabySeat",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -64,6 +62,7 @@
     "cordova.plugins.diagnostic": "^4.0.10",
     "core-js": "^2.5.4",
     "firebase": "^5.8.1",
+    "firebase-admin": "^7.0.0",
     "ionic-selectable": "^4.2.0",
     "leaflet": "^1.4.0",
     "rxjs": "~6.3.3",
@@ -95,7 +94,8 @@
     "protractor": "~5.4.0",
     "ts-node": "~8.0.0",
     "tslint": "~5.12.0",
-    "typescript": "~3.1.6"
+    "typescript": "~3.1.6",
+
   },
   "description": "An Ionic project",
   "cordova": {

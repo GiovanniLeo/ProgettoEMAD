@@ -39,7 +39,7 @@ export class SigninPage implements OnInit {
             cognome: ['', Validators.required],
             email: ['', Validators.compose([Validators.required, Validators.email])],
             password: ['', Validators.compose([Validators.required, Validators.min(6)])],
-            confermap: ['', Validators.required],
+            confermap: ['', Validators.compose([Validators.required, Validators.min(6)])],
             ruolo: ['', Validators.required],
             citta: ['', Validators.required]
         });
