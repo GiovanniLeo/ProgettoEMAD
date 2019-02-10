@@ -10,6 +10,7 @@ import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {BleService} from '../services/bleService/ble.service';
+import {GeolocationService} from '../services/geolocationService/geolocation.service';
 
 
 
@@ -29,6 +30,7 @@ export class HomePage implements OnInit {
     role;
     isAutista = false;
     isAngelo = false;
+    corrds;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
@@ -36,7 +38,8 @@ export class HomePage implements OnInit {
                 private authService: AuthService,
                 private auth: AngularFireAuth,
                 private bleSer: BleService,
-                private firestore: AngularFirestore) {
+                private firestore: AngularFirestore,
+                private geolocationService: GeolocationService) {
 
         this.auth.authState.subscribe(user => {
             if (!user) {
@@ -51,7 +54,9 @@ export class HomePage implements OnInit {
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
             this.checkThreshold(this.threshold);
-            this.bleSer.checkBluetoothSignal();
+             this.geolocationService.getPositionOnDevice();
+            // this.bleSer.checkBluetoothSignal();
+            this.getRole();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -70,7 +75,6 @@ export class HomePage implements OnInit {
     ngOnInit(): void {
         this.instialState();
         console.log('Init');
-        this.getRole();
 
     }
 
@@ -151,7 +155,7 @@ export class HomePage implements OnInit {
     getRole() {
         this.auth.authState.subscribe(user => {
             if (user) {
-                  console.log('uid: ' + user.uid);
+                console.log('uid: ' + user.uid);
                 const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
                 // console.log(user.uid);
                 userDoc.subscribe( us => {
@@ -165,11 +169,12 @@ export class HomePage implements OnInit {
         });
     }
 
-    checkRole(role: String) {
+    checkRole(role: string) {
         console.log(role + '-----');
         if (role === this.constDb.AUTISTA ) {
             this.isAutista = true;
             this.isAngelo = false;
+            this.geolocationService.getBackGroundPosition(role);
         } else {
             this.isAngelo = true;
             this.isAutista = false;
