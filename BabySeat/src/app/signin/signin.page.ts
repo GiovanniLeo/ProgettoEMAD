@@ -87,6 +87,7 @@ export class SigninPage implements OnInit {
         } else {
             this.auth.signupUser(this.regForm.value.email, this.regForm.value.password).then(
                 authData => {
+                    // adding to firestore using the uid
                     const users = this.firestore.doc('users/' + authData.user.uid).set({
                         'nome': nome,
                         'cognome': cognome,
