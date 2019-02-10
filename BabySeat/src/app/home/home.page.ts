@@ -9,7 +9,7 @@ import {BackgroundMode} from '@ionic-native/background-mode/ngx';
 import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
-import * as admin from 'firebase-admin';
+import {HttpClient} from '@angular/common/http';
 
 
 
@@ -30,7 +30,8 @@ export class HomePage implements OnInit {
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
-                private firestore: AngularFirestore) {
+                private firestore: AngularFirestore,
+                private http: HttpClient) {
 
         this.auth.authState.subscribe(user => {
             if (!user) {
@@ -86,18 +87,24 @@ export class HomePage implements OnInit {
 
         this.auth.authState.subscribe(user => {
             if (user) {
-                // Notification content
-                const payload = {
-                    notification: {
-                        title: 'Ciao!',
-                        body: `Bell!`,
-                        icon: 'https://goo.gl/Fz9nrQ'
-                    }
-                };
-
+                // getting the token device of the user, and sending via http to cloud function for sending a cloud message to the device
                 const device = this.firestore.doc<any>('devices/' + user.uid).get();
+
+                // querying the user for the token, parsing to JSON and sending via post
                 device.subscribe(tokenUser => {
-                    const token = tokenUser.get('token');
+                    const objToken = {
+                        token: tokenUser.get('token')
+                    };
+
+                    const jsonToken = JSON.stringify(objToken);
+
+                    console.log(jsonToken);
+                    this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/notification', jsonToken)
+                        .subscribe((data) => {
+                            console.log('Notification received, response: ' + data);
+                        }, error => {
+                            console.log(error.message);
+                        });
                 }, error => {
                     console.log(error.message);
                 });
