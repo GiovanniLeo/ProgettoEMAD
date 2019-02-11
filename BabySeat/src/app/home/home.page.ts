@@ -173,7 +173,7 @@ export class HomePage implements OnInit {
         if (role === this.constDb.AUTISTA ) {
             this.isAutista = true;
             this.isAngelo = false;
-            this.geolocationService.getPositionOnDevice();
+            this.geolocationService.getPositionOnDevice(false);
             this.geolocationService.getBackGroundPosition(role);
         } else {
             this.isAngelo = true;

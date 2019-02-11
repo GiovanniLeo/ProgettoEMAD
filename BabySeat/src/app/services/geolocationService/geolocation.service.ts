@@ -21,7 +21,7 @@ export class GeolocationService {
               private ngZone: NgZone,
               private constDb: ConstantDbService) { }
 
-  getPositionOnDevice() {
+  getPositionOnDevice(updateDb: boolean) {
     this.diagnostic.getLocationMode().then((state) => {
       if (state === this.diagnostic.locationMode.LOCATION_OFF) {
         this.requestPositionAttivation();
@@ -29,7 +29,11 @@ export class GeolocationService {
         this.geolocation.getCurrentPosition().then((resp) => {
           this.lat = resp.coords.latitude;
           this.long = resp.coords.longitude;
-          // this.updateGeolocationOnDb();
+
+          if (updateDb === true) {
+            this.updateGeolocationOnDb();
+          }
+
           console.log(resp.coords.latitude + ' ' + resp.coords.longitude);
           console.log('else loc');
         }).catch((error) => {
@@ -61,8 +65,10 @@ export class GeolocationService {
       if (user) {
         console.log('uid: ' + user.uid);
         const userDoc = this.firestore.doc<any>('users/' + user.uid).update( {
-          lat: this.lat,
-          lng: this.long
+          citta: {
+            lat: this.lat,
+            lng: this.long
+          }
         });
       }
     });
@@ -73,7 +79,7 @@ export class GeolocationService {
       const intervalId = setInterval(() => {
         if (role === this.constDb.AUTISTA) {
           console.log('pos back');
-          this.getPositionOnDevice();
+          this.getPositionOnDevice(true);
         } else {
           clearInterval(intervalId);
         }
