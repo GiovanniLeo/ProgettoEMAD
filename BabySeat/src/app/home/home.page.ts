@@ -54,7 +54,6 @@ export class HomePage implements OnInit {
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
             this.checkThreshold(this.threshold);
-             this.geolocationService.getPositionOnDevice();
             // this.bleSer.checkBluetoothSignal();
             this.getRole();
         });
@@ -174,6 +173,7 @@ export class HomePage implements OnInit {
         if (role === this.constDb.AUTISTA ) {
             this.isAutista = true;
             this.isAngelo = false;
+            this.geolocationService.getPositionOnDevice();
             this.geolocationService.getBackGroundPosition(role);
         } else {
             this.isAngelo = true;

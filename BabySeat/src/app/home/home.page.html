@@ -30,6 +30,10 @@
             <ion-label>Connessione Bluetooth</ion-label>
             <ion-button slot="end" routerLink="/ble-connet">Vai</ion-button>
         </ion-item>
+        <ion-item *ngIf="isAutista">
+            <ion-label>Associa utenti</ion-label>
+            <ion-button slot="end" routerLink="/selectUser">Vai</ion-button>
+        </ion-item>
     </ion-list>
 
     <ion-button id="send" style="display: none" (click)="sendNotification()">Send Notification</ion-button>

@@ -60,7 +60,7 @@ export class GeolocationService {
     this.auth.authState.subscribe(user => {
       if (user) {
         console.log('uid: ' + user.uid);
-        const userDoc = this.firestore.doc<any>('users/' + user.uid).set( {
+        const userDoc = this.firestore.doc<any>('users/' + user.uid).update( {
           lat: this.lat,
           lng: this.long
         });
