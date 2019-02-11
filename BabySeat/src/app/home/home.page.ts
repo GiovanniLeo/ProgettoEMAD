@@ -22,15 +22,14 @@ import {GeolocationService} from '../services/geolocationService/geolocation.ser
     styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
+    userObj = null;
     threshold = 2;
     danger = false;
     timer: number;
     value: number;
     stopProgres = false;
-    role;
     isAutista = false;
     isAngelo = false;
-    corrds;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
@@ -45,6 +44,29 @@ export class HomePage implements OnInit {
         this.auth.authState.subscribe(user => {
             if (!user) {
                 this.router.navigate(['/login']);
+            } else {
+                if (this.userObj === null) {
+                    console.log(user.uid);
+                    // getting the user info, if it's logged
+                    this.firestore.doc<any>('users/' + user.uid).get().subscribe(userObj => {
+                        const userJson = {
+                            uid: user.uid,
+                            nome: userObj.get('nome'),
+                            cognome: userObj.get('cognome'),
+                            email: userObj.get('email'),
+                            ruolo: userObj.get('ruolo'),
+                        };
+
+                        this.checkRole(userJson.ruolo);
+
+                        // useful to save the JSON stringified, so that the method will wait that all the variables are setted
+                        // in this way, before using the fields it should be parsed with JSON.parse()
+                        this.userObj = JSON.stringify(userJson);
+                        console.log(userObj);
+                    }, error => {
+                        this.userObj = null;
+                    });
+                }
             }
         }, (error) => {
             console.log(error.message);
@@ -53,10 +75,9 @@ export class HomePage implements OnInit {
 
 
         this.platform.ready().then((rdy) => {
-            this.localNotification.on('click');
             this.checkThreshold(this.threshold);
             // this.bleSer.checkBluetoothSignal();
-            this.getRole();
+            // t his.getRole();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -66,54 +87,49 @@ export class HomePage implements OnInit {
             this.instialState();
         });
         this.value = 0.0;
-
-        if (this.backMode.isEnabled()) {
-            this.sendNotification('BackMode');
-        }
     }
 
     ngOnInit(): void {
         this.instialState();
-        console.log('Init');
+    }
+
+    sendNotification(type: string) {
+
+
+        if (this.userObj !== null) {
+            const userJson = JSON.parse(this.userObj);
+
+            // getting the token device of the user, and sending via http to cloud function for sending a cloud message to the device
+            const device = this.firestore.doc<any>('devices/' + userJson.uid).get();
+
+            // querying the user for the token, parsing to JSON and sending via post
+            device.subscribe(tokenUser => {
+                const obj = {
+                    token: tokenUser.get('token'),
+                    nome: userJson.nome,
+                    cognome: userJson.cognome
+                };
+
+                const jsonToken = JSON.stringify(obj);
+
+                console.log(jsonToken);
+                this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/sendNotificationToAngels', jsonToken)
+                    .subscribe((data) => {
+                        console.log('Notification sended, response: ' + data.toString());
+                    }, error => {
+                        console.log(error.message);
+                    });
+            }, error => {
+                console.log(error.message);
+            });
+        } else {
+            console.log('Cannot send notification');
+        }
 
     }
 
-    sendNotification(message: string) {
-
-        this.auth.authState.subscribe(user => {
-            if (user) {
-                // getting the token device of the user, and sending via http to cloud function for sending a cloud message to the device
-                const device = this.firestore.doc<any>('devices/' + user.uid).get();
-
-                // querying the user for the token, parsing to JSON and sending via post
-                device.subscribe(tokenUser => {
-                    const objToken = {
-                        token: tokenUser.get('token')
-                    };
-
-                    const jsonToken = JSON.stringify(objToken);
-
-                    console.log(jsonToken);
-                    this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/notification', jsonToken)
-                        .subscribe((data) => {
-                            console.log('Notification received, response: ' + data);
-                        }, error => {
-                            console.log(error.message);
-                        });
-                }, error => {
-                    console.log(error.message);
-                });
-            } else {
-                console.log('Cannot send notification');
-            }
-        }, (error) => {
-            console.log(error.message);
-        });
 
 
-
-
-    }
 
     checkThreshold(threshold: number): void {
         if (threshold <= 3) {
@@ -155,24 +171,8 @@ export class HomePage implements OnInit {
     }
 
     logout() {
+        this.userObj = null;
         this.authService.logoutUser();
-    }
-
-    getRole() {
-        this.auth.authState.subscribe(user => {
-            if (user) {
-                console.log('uid: ' + user.uid);
-                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
-                // console.log(user.uid);
-                userDoc.subscribe( us => {
-                    // console.log(us);
-                    const role = us.get('ruolo');
-                    this.checkRole(role);
-                } , error => {
-                    console.log(error.message);
-                });
-            }
-        });
     }
 
     checkRole(role: string) {
