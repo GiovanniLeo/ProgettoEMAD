@@ -22,7 +22,6 @@ import {GeolocationService} from '../services/geolocationService/geolocation.ser
     styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-    userObj = null;
     threshold = 2;
     danger = false;
     timer: number;
@@ -41,9 +40,16 @@ export class HomePage implements OnInit {
                 private bleSer: BleService,
                 private geolocationService: GeolocationService) {
 
+        if (constDb.USER_OBJ !== null) {
+console.log(constDb.USER_OBJ);
+            this.checkRole(JSON.parse(constDb.USER_OBJ).ruolo);
+        } else {
+            router.navigate(['/login']);
+        }
+            /*
         this.auth.authState.subscribe(user => {
             if (!user) {
-                this.router.navigate(['/login']);
+                router.navigate(['/login']);
             } else {
                 if (this.userObj === null) {
                     console.log(user.uid);
@@ -73,7 +79,7 @@ export class HomePage implements OnInit {
             this.router.navigate(['/login']);
         });
 
-
+*/
         this.platform.ready().then((rdy) => {
             this.checkThreshold(this.threshold);
             // this.bleSer.checkBluetoothSignal();
@@ -95,9 +101,9 @@ export class HomePage implements OnInit {
 
     sendNotification(type: string) {
 
-
-        if (this.userObj !== null) {
-            const userJson = JSON.parse(this.userObj);
+        console.log(this.constDb.USER_OBJ);
+        if (this.constDb.USER_OBJ !== null) {
+            const userJson = JSON.parse(this.constDb.USER_OBJ);
 
             // getting the token device of the user, and sending via http to cloud function for sending a cloud message to the device
             const device = this.firestore.doc<any>('devices/' + userJson.uid).get();
@@ -171,7 +177,7 @@ export class HomePage implements OnInit {
     }
 
     logout() {
-        this.userObj = null;
+        this.constDb.USER_OBJ = null;
         this.authService.logoutUser();
     }
 

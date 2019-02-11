@@ -14,4 +14,5 @@ export class ConstantDbService {
   BLE_DEVICE = 'Id ble';
   AUTISTA = 'Au';
   ANGELO = 'An';
+  USER_OBJ = null;
 }
