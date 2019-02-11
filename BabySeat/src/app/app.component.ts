@@ -13,6 +13,7 @@ import {Router} from '@angular/router';
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
+
 export class AppComponent {
   constructor(
       private platform: Platform,
@@ -21,6 +22,7 @@ export class AppComponent {
       private toastCtrl: ToastController,
       private auth: AngularFireAuth,
       private router: Router
+
   ) {
 
     // check if logged

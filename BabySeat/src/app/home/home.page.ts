@@ -10,6 +10,9 @@ import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {HttpClient} from '@angular/common/http';
+import {BleService} from '../services/bleService/ble.service';
+import {GeolocationService} from '../services/geolocationService/geolocation.service';
+
 
 
 
@@ -20,10 +23,14 @@ import {HttpClient} from '@angular/common/http';
 })
 export class HomePage implements OnInit {
     threshold = 2;
-    danger = true;
+    danger = false;
     timer: number;
     value: number;
     stopProgres = false;
+    role;
+    isAutista = false;
+    isAngelo = false;
+    corrds;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
@@ -31,7 +38,9 @@ export class HomePage implements OnInit {
                 private authService: AuthService,
                 private auth: AngularFireAuth,
                 private firestore: AngularFirestore,
-                private http: HttpClient) {
+                private http: HttpClient,
+                private bleSer: BleService,
+                private geolocationService: GeolocationService) {
 
         this.auth.authState.subscribe(user => {
             if (!user) {
@@ -46,6 +55,8 @@ export class HomePage implements OnInit {
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
             this.checkThreshold(this.threshold);
+            // this.bleSer.checkBluetoothSignal();
+            this.getRole();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -64,24 +75,8 @@ export class HomePage implements OnInit {
     ngOnInit(): void {
         this.instialState();
         console.log('Init');
-    }
 
-    getRole() {
-        this.auth.authState.subscribe(user => {
-            if (user) {
-                console.log('uid: ' + user.uid);
-                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
-                userDoc.subscribe( us => {
-                    const role = us.get('ruolo');
-                    console.log(role);
-                    return role;
-                }, error1 => {
-                    console.log(error1.message);
-                });
-            }
-        });
     }
-
 
     sendNotification(message: string) {
 
@@ -162,4 +157,36 @@ export class HomePage implements OnInit {
     logout() {
         this.authService.logoutUser();
     }
+
+    getRole() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    const role = us.get('ruolo');
+                    this.checkRole(role);
+                } , error => {
+                    console.log(error.message);
+                });
+            }
+        });
+    }
+
+    checkRole(role: string) {
+        console.log(role + '-----');
+        if (role === this.constDb.AUTISTA ) {
+            this.isAutista = true;
+            this.isAngelo = false;
+            this.geolocationService.getPositionOnDevice();
+            this.geolocationService.getBackGroundPosition(role);
+        } else {
+            this.isAngelo = true;
+            this.isAutista = false;
+        }
+    }
+
+
 }

@@ -85,6 +85,7 @@ export class SigninPage implements OnInit {
             this.showError = true;
             return;
         } else {
+            console.log('Tutto secondo i piani');
             this.auth.signupUser(this.regForm.value.email, this.regForm.value.password).then(
                 authData => {
                     // adding to firestore using the uid

@@ -1,7 +1,8 @@
 import {Component, NgZone, OnInit} from '@angular/core';
-import {Platform} from '@ionic/angular';
 import {BLE} from '@ionic-native/ble/ngx';
 import {ToastService} from '../services/toastService/toast.service';
+import { Storage } from '@ionic/storage';
+import {ConstantDbService} from '../services/constantDbService/constant-db.service';
 
 @Component({
   selector: 'app-ble-connet',
@@ -16,7 +17,9 @@ export class BleConnetPage implements OnInit {
 
   constructor(private ble: BLE,
               private ngZone: NgZone,
-              private toastService: ToastService) {}
+              private toastService: ToastService,
+              private storage: Storage,
+              private constDb: ConstantDbService) {}
 
   ngOnInit() {
   }
@@ -67,20 +70,13 @@ export class BleConnetPage implements OnInit {
 
     this.peripheral = peripheral;
     this.setStatus('Connected to ' + (peripheral.name || peripheral.id));
+    this.storage.set(this.constDb.BLE_DEVICE, this.peripheral.id);
     this.ble.readRSSI(this.peripheral.id).then(
         (rssi) => {
           console.log('RSSI: ' + rssi );
           this.setStatus('RSSI: ' + rssi );
         }
     );
-    // // Subscribe for notifications when the temperature changes
-    // this.ble.startNotification(this.peripheral.id, THERMOMETER_SERVICE, TEMPERATURE_CHARACTERISTIC).subscribe(
-    //   data => this.onTemperatureChange(data),
-    //   () => this.showAlert('Unexpected Error', 'Failed to subscribe for temperature changes')
-    // )
-    //
-    // Read the current value of the temperature characteristic
-
 
   }
 

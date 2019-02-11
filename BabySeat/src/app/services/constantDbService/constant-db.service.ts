@@ -11,4 +11,7 @@ export class ConstantDbService {
   BLU_ALLARM = 'userBluetoothAllarm';
   ALLARM_DEACT = 'userAllarmDeactivation';
   BLUE_GEO = 'UserBluetoothPowerGeolocation';
+  BLE_DEVICE = 'Id ble';
+  AUTISTA = 'Au';
+  ANGELO = 'An';
 }
