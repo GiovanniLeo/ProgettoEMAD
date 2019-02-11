@@ -19,7 +19,13 @@ exports.notification = functions.https.onRequest((request, response) => {
 
         console.log(token);
 
-        const stat = admin.messaging().sendToDevice((token === undefined) ? [] : token, payload);
+
+        // on click notific
+        const stat = admin.messaging().sendToDevice((token === undefined) ? [] : token, payload).then({
+
+        }).catch({
+
+        });
 
         const objStatus = {
             status: stat
