@@ -14,4 +14,8 @@ export class ConstantDbService {
   BLE_DEVICE = 'Id ble';
   AUTISTA = 'Au';
   ANGELO = 'An';
+  minGeolocationRange = 1; // minuti
+  minBluetoothAllarm = -74; // threshold(Dipende dal bluetooth)
+  minRangeAllarmDeactivation = 30; // secondi
+  minBluetoothPowerGeolocation =  -74; // soglia bluetooth
 }

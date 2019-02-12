@@ -6,12 +6,13 @@ import {ToastService} from '../toastService/toast.service';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {ConstantDbService} from '../constantDbService/constant-db.service';
+import {Storage} from '@ionic/storage';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GeolocationService {
-  lat; long;
+  lat; long; geolocationTimer;
   constructor(private diagnostic: Diagnostic,
               private firestore: AngularFirestore,
               private auth: AngularFireAuth,
@@ -19,7 +20,9 @@ export class GeolocationService {
               private geolocation: Geolocation,
               private toastController: ToastService,
               private ngZone: NgZone,
-              private constDb: ConstantDbService) { }
+              private constDb: ConstantDbService,
+              private storage: Storage) {
+  }
 
   getPositionOnDevice(updateDb: boolean) {
     this.diagnostic.getLocationMode().then((state) => {
@@ -75,15 +78,28 @@ export class GeolocationService {
   }
 
   getBackGroundPosition(role: string) {
+    this.geolocationTimer = 60 * 1000;
     this.ngZone.run(() => {
       const intervalId = setInterval(() => {
         if (role === this.constDb.AUTISTA) {
+          this.checkTimer();
+          this.geolocationTimer = this.geolocationTimer * 1000;
           console.log('pos back');
           this.getPositionOnDevice(true);
         } else {
           clearInterval(intervalId);
         }
-      }, 5000);
+      }, this.geolocationTimer);
+    });
+  }
+
+  checkTimer() {
+    this.storage.get(this.constDb.GEO_RANGE).then((val) => {
+      if (val !== null && val !== undefined) {
+        this.geolocationTimer = val;
+      } else {
+        this.geolocationTimer = this.constDb.minGeolocationRange;
+      }
     });
   }
 

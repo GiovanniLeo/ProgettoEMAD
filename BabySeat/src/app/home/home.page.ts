@@ -54,7 +54,7 @@ export class HomePage implements OnInit {
         this.platform.ready().then((rdy) => {
             this.localNotification.on('click');
             this.checkThreshold(this.threshold);
-            // this.bleSer.checkBluetoothSignal();
+            this.bleSer.checkBluetoothSignal();
             this.getRole();
         });
 
