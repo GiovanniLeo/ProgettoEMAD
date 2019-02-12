@@ -15,6 +15,8 @@ import { AuthService } from '../services/authService/autb-service.service';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {GeolocationService} from '../services/geolocationService/geolocation.service';
+import {ConstantDbService} from '../services/constantDbService/constant-db.service';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
@@ -39,7 +41,10 @@ export class LoginPage implements OnInit {
               private fb: FormBuilder,
               private http: HttpClient,
               private auth: AuthService,
-              private geolocationService: GeolocationService) {
+              private fireAuth: AngularFireAuth,
+              private geolocationService: GeolocationService,
+              private firestore: AngularFirestore,
+              private constDb: ConstantDbService) {
     this.logForm = fb.group({
       email: ['', Validators.compose([Validators.required, Validators.email])],
       password: ['', Validators.compose([Validators.required, Validators.minLength(6)])]
@@ -67,15 +72,50 @@ export class LoginPage implements OnInit {
 
     this.auth.loginUser(this.logForm.value.email, this.logForm.value.password)
         .then(
-        authData => {
-          this.unespectedError = false;
-          this.router.navigate(['/home']);
-        },
-        (error) => {
+            authData => {
+              this.fireAuth.authState.subscribe(user => {
+
+                if (!user) {
+                  this.constDb.USER_OBJ = null;
+                  this.showError = true;
+                  this.unespectedError = true;
+
+                } else {
+                  // getting the user info, if it's logged
+                  this.firestore.doc<any>('users/' + user.uid).get().subscribe(userObj => {
+
+                    const userJson = {
+                      uid: user.uid,
+                      nome: userObj.get('nome'),
+                      cognome: userObj.get('cognome'),
+                      email: userObj.get('email'),
+                      ruolo: userObj.get('ruolo'),
+                    };
+
+
+                    // useful to save the JSON stringified, so that the method will wait that all the variables are setted
+                    // in this way, before using the fields it should be parsed with JSON.parse()
+                    this.constDb.USER_OBJ = JSON.stringify(userJson);
+                    console.log(this.constDb.USER_OBJ);
+
+                    this.unespectedError = false;
+                    this.showError = false;
+                    this.router.navigate(['/home']);
+
+
+                  }, error => {
+                    this.constDb.USER_OBJ = null;
+                    this.unespectedError = true;
+                  });
+                }
+              });
+            }).catch(
+        error => {
+          console.log(error.message);
+          this.constDb.USER_OBJ = null;
           this.showError = true;
-          this.unespectedError = true;
         });
-   }
+  }
 
 
 

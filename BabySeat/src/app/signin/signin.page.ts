@@ -29,7 +29,7 @@ export class SigninPage implements OnInit {
     response: String;
 
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
-                private http: HttpClient, private constDB: ConstantDbService,
+                private http: HttpClient, private constDb: ConstantDbService,
                 private auth: AuthService, private router: Router, private dialogs: Dialogs, private firestore: AngularFirestore,
                 private localNotification: LocalNotifications,
                 private fcm: FcmService) {
@@ -88,7 +88,9 @@ export class SigninPage implements OnInit {
             console.log('Tutto secondo i piani');
             this.auth.signupUser(this.regForm.value.email, this.regForm.value.password).then(
                 authData => {
+                    // adding to firestore using the uid
                     const users = this.firestore.doc('users/' + authData.user.uid).set({
+                        'uid': authData.user.uid,
                         'nome': nome,
                         'cognome': cognome,
                         'email': email,
@@ -96,6 +98,20 @@ export class SigninPage implements OnInit {
                         'ruolo': ruolo,
                         'citta': citta
                     });
+
+                    const userJson = {
+                        uid: authData.user.uid,
+                        nome: nome,
+                        cognome: cognome,
+                        email: email,
+                        ruolo: ruolo,
+                    };
+
+
+                    // useful to save the JSON stringified, so that the method will wait that all the variables are setted
+                    // in this way, before using the fields it should be parsed with JSON.parse()
+                    this.constDb.USER_OBJ = JSON.stringify(userJson);
+                    console.log(this.constDb.USER_OBJ);
 
                     this.notificationSetup();
                     this.showError = false;
@@ -113,8 +129,14 @@ export class SigninPage implements OnInit {
     // listen for notification
     notificationSetup() {
         this.fcm.getToken();
+        // aprire mappa con coordinate
+
         this.fcm.listenToNotifications().subscribe(
             (msg) => {
+                console.log('notification: ' + msg);
+                // deve aprirsi la mappa e settarsi le coordinate inviate, se la notifica è quella di bambino dimenticato
+                // da autista ad angelo.. se invece la notifica è per allontanamento bluetooth, deve partire la progress e aprirsi la home
+                // se invece un nuovo angelo si è associato, o hai associato un nuovo utente, si apre qualcosa..
                 if (this.platform.is('ios')) {
                     this.localNotification.schedule({
                         id: 1,
@@ -130,7 +152,9 @@ export class SigninPage implements OnInit {
                         sound: 'file://beep.caf'
                     });
                 }
+
             });
+
 
     }
 

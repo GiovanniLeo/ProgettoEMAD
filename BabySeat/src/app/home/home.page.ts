@@ -9,9 +9,9 @@ import {BackgroundMode} from '@ionic-native/background-mode/ngx';
 import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {HttpClient} from '@angular/common/http';
 import {BleService} from '../services/bleService/ble.service';
 import {GeolocationService} from '../services/geolocationService/geolocation.service';
-
 
 
 
@@ -27,32 +27,33 @@ export class HomePage implements OnInit {
     timer: number;
     value: number;
     stopProgres = false;
-    role;
     isAutista = false;
     isAngelo = false;
-    corrds;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
-                private bleSer: BleService,
                 private firestore: AngularFirestore,
+                private http: HttpClient,
+                private bleSer: BleService,
                 private geolocationService: GeolocationService) {
 
-        this.auth.authState.subscribe(user => {
-            if (!user) {
-                this.router.navigate(['/login']);
+        if (constDb.USER_OBJ !== null) {
+            if (JSON.parse(this.constDb.USER_OBJ).ruolo === this.constDb.AUTISTA) {
+                this.isAutista = true;
+                this.isAngelo = false;
+            } else {
+                this.isAutista = false;
+                this.isAngelo = true;
             }
-        }, (error) => {
-            console.log(error.message);
-            this.router.navigate(['/login']);
-        });
+        } else {
 
+            router.navigate(['/login']);
+        }
 
         this.platform.ready().then((rdy) => {
-            this.localNotification.on('click');
             this.checkThreshold(this.threshold);
             this.bleSer.checkBluetoothSignal();
             this.getRole();
@@ -65,47 +66,10 @@ export class HomePage implements OnInit {
             this.instialState();
         });
         this.value = 0.0;
-
-        if (this.backMode.isEnabled()) {
-            this.sendNotification('BackMode');
-        }
     }
 
     ngOnInit(): void {
         this.instialState();
-        console.log('Init');
-
-    }
-
-    sendNotification(message: string) {
-
-        this.auth.authState.subscribe(user => {
-            if (user) {
-                // Notification content
-                const payload = {
-                    notification: {
-                        title: 'Ciao!',
-                        body: `Bell!`,
-                        icon: 'https://goo.gl/Fz9nrQ'
-                    }
-                };
-
-                const device = this.firestore.doc<any>('devices/' + user.uid).get();
-                device.subscribe(tokenUser => {
-                    const token = tokenUser.get('token');
-                }, error => {
-                    console.log(error.message);
-                });
-            } else {
-                console.log('Cannot send notification');
-            }
-        }, (error) => {
-            console.log(error.message);
-        });
-
-
-
-
     }
 
     checkThreshold(threshold: number): void {
@@ -136,6 +100,8 @@ export class HomePage implements OnInit {
                 this.value = this.value + progres;
             } else {
                 clearInterval(intervalId);
+                this.sendNotificationToAngels();
+
             }
         }, 1000);
 
@@ -148,24 +114,8 @@ export class HomePage implements OnInit {
     }
 
     logout() {
+        this.constDb.USER_OBJ = null;
         this.authService.logoutUser();
-    }
-
-    getRole() {
-        this.auth.authState.subscribe(user => {
-            if (user) {
-                console.log('uid: ' + user.uid);
-                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
-                // console.log(user.uid);
-                userDoc.subscribe( us => {
-                    // console.log(us);
-                    const role = us.get('ruolo');
-                    this.checkRole(role);
-                } , error1 => {
-                    console.log(error1.message);
-                });
-            }
-        });
     }
 
     checkRole(role: string) {
@@ -181,5 +131,56 @@ export class HomePage implements OnInit {
         }
     }
 
+    sendNotificationToAngels() {
+
+        if (this.constDb.USER_OBJ !== null) {
+            const userJson = JSON.parse(this.constDb.USER_OBJ);
+            const obj = {
+                uid: userJson.uid,
+                nome: userJson.nome,
+                cognome: userJson.cognome,
+                lat: 'lat',
+                long: 'long'
+            };
+            const jsonUser = JSON.stringify(obj);
+
+            console.log('jsonuser in home.page: ' + jsonUser);
+            this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/sendNotificationToAngels', jsonUser)
+                .subscribe((data) => {
+                    console.log('Notification to angels sended, response: ' + data.toString());
+                }, error => {
+                    console.log(error.message);
+                });
+
+
+            // getting the token device of the user, and sending via http to cloud function for sending a cloud message to the device
+            /*const device = this.firestore.doc<any>('devices/' + userJson.uid).get();
+
+            // querying the user for the token, parsing to JSON and sending via post
+            device.subscribe(tokenUser => {
+                const obj = {
+                    token: tokenUser.get('token'),
+                    uid: userJson.uid,
+                    nome: userJson.nome,
+                    cognome: userJson.cognome
+                };
+
+                const jsonUser = JSON.stringify(obj);
+
+                console.log(jsonUser);
+                this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/sendNotification', jsonUser)
+                    .subscribe((data) => {
+                        console.log('Notification sended, response: ' + data.toString());
+                    }, error => {
+                        console.log(error.message);
+                    });
+            }, error => {
+                console.log(error.message);
+            });*/
+        } else {
+            console.log('Cannot send notification');
+        }
+
+    }
 
 }
