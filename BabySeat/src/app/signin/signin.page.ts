@@ -134,7 +134,9 @@ export class SigninPage implements OnInit {
         this.fcm.listenToNotifications().subscribe(
             (msg) => {
                 console.log('notification: ' + msg);
-
+                // deve aprirsi la mappa e settarsi le coordinate inviate, se la notifica è quella di bambino dimenticato
+                // da autista ad angelo.. se invece la notifica è per allontanamento bluetooth, deve partire la progress e aprirsi la home
+                // se invece un nuovo angelo si è associato, o hai associato un nuovo utente, si apre qualcosa..
                 if (this.platform.is('ios')) {
                     this.localNotification.schedule({
                         id: 1,
