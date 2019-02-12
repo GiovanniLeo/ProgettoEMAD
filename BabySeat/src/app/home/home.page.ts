@@ -167,31 +167,6 @@ export class HomePage implements OnInit {
                     console.log(error.message);
                 });
 
-
-            // getting the token device of the user, and sending via http to cloud function for sending a cloud message to the device
-            /*const device = this.firestore.doc<any>('devices/' + userJson.uid).get();
-
-            // querying the user for the token, parsing to JSON and sending via post
-            device.subscribe(tokenUser => {
-                const obj = {
-                    token: tokenUser.get('token'),
-                    uid: userJson.uid,
-                    nome: userJson.nome,
-                    cognome: userJson.cognome
-                };
-
-                const jsonUser = JSON.stringify(obj);
-
-                console.log(jsonUser);
-                this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/sendNotification', jsonUser)
-                    .subscribe((data) => {
-                        console.log('Notification sended, response: ' + data.toString());
-                    }, error => {
-                        console.log(error.message);
-                    });
-            }, error => {
-                console.log(error.message);
-            });*/
         } else {
             console.log('Cannot send notification');
         }

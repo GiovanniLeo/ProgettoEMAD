@@ -8,13 +8,14 @@ exports.sendNotificationToAngels = functions.https.onRequest((request, response)
 
     cors(request, response, () => {
         let tokens: string[] = [];
+
         const uid = JSON.parse(request.body).uid;
         const lat = JSON.parse(request.body).lat;
         const long = JSON.parse(request.body).long;
         const nome = JSON.parse(request.body).nome;
         const cognome = JSON.parse(request.body).cognome;
 
-        console.log(uid);
+        console.log('Richiesta pervenuta da autista: ' + uid);
 
         // Notification content
         // inviare coordinate ad angeli
@@ -30,13 +31,40 @@ exports.sendNotificationToAngels = functions.https.onRequest((request, response)
 
 
 
-        firestore.collection('association', ref => ref.where('uidAutista', '==', uid)).get().then(users => {
+        firestore.collection('association', ref => ref.where('uidAutista', '==', uid)).get().then(associations => {
             let uidAngelo;
-            users.forEach(user => {
-                uidAngelo = user.get('uidAngelo');
-                console.log("Angelo: " + user.get('uidAngelo'));
+            const size = associations.size;
+
+            console.log('Numero di angeli associato: ' + associations.size);
+            let i = 1;
+
+            // for each associations
+            associations.forEach(ass => {
+                uidAngelo = ass.get('uidAngelo');
+
+                // getting the token of the angel that has to receive the notification
                 firestore.collection('devices').doc(uidAngelo).get().then(tok => {
                     tokens.push(tok.get('token'));
+
+                    // waiting for the end of the angels's search
+                    if (i === size){
+
+                        // click sulla notifica deve aprirsi la mappa nel dispositivo
+                        const stat = admin.messaging().sendToDevice(tokens, payload);
+
+                        const objStatus = {
+                            status: stat,
+                            nome: nome,
+                            cognome: cognome,
+                            lat: lat,
+                            long: long
+                        };
+
+                        response.status(200).send(JSON.stringify(objStatus));
+
+                    } else {
+                        i = i + 1;
+                    }
                 });
 
             });
@@ -44,22 +72,9 @@ exports.sendNotificationToAngels = functions.https.onRequest((request, response)
         }).catch(err => {
             console.log(err.message);
         });
-
-
-
-        // click sulla notifica deve aprirsi la mappa nel dispositivo
-        const stat = admin.messaging().sendToDevice(tokens, payload);
-
-        const objStatus = {
-            status: stat,
-            nome: nome,
-            cognome: cognome,
-            lat: lat,
-            long: long
-        };
-
-        response.status(200).send(JSON.stringify(objStatus));
     });
+
+
 
 });
 
