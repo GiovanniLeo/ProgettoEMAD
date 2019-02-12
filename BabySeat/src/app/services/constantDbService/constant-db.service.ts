@@ -19,4 +19,6 @@ export class ConstantDbService {
   minRangeAllarmDeactivation = 30; // secondi
   minBluetoothPowerGeolocation =  -74; // soglia bluetooth
   USER_OBJ = null;
+  lat = 0 ;
+  long = 0;
 }

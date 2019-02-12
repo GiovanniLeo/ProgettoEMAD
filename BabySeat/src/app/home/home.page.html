@@ -18,25 +18,24 @@
     </ion-progress-bar>
 
     <ion-list>
-        <ion-item *ngIf="(this.constDb.USER_OBJ.ruolo === this.constDb.AUTISTA)">
+        <ion-item *ngIf="isAutista">
             <ion-label>Configurazione</ion-label>
             <ion-button slot="end" routerLink="/configuration">Vai</ion-button>
         </ion-item>
-        <ion-item *ngIf="(this.constDb.ruolo === this.constDb.ANGELO)">
+        <ion-item *ngIf="isAngelo">
             <ion-label>Mappa</ion-label>
             <ion-button slot="end" routerLink="/map-view">Vai</ion-button>
         </ion-item>
-        <ion-item *ngIf="(this.constDb.ruolo === this.constDb.AUTISTA)">
+        <ion-item *ngIf="isAutista">
             <ion-label>Connessione Bluetooth</ion-label>
             <ion-button slot="end" routerLink="/ble-connet">Vai</ion-button>
         </ion-item>
-        <ion-item *ngIf="(this.constDb.ruolo === this.constDb.AUTISTA)">
+        <ion-item *ngIf="isAutista">
             <ion-label>Associa utenti</ion-label>
             <ion-button slot="end" routerLink="/selectUser">Vai</ion-button>
         </ion-item>
     </ion-list>
 
-    <ion-button id="send" (click)="sendNotificationToAngels()">Send Notification</ion-button>
     <ion-button (click)="startProgresBar()" >Start P</ion-button>
     <ion-button (click)="stopProgress()" >Stop P</ion-button>
 

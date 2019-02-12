@@ -107,6 +107,10 @@ export class SigninPage implements OnInit {
                         ruolo: ruolo,
                     };
 
+                    // Save city cords to local db
+                    this.constDb.lat = this.city.lat;
+                    this.constDb.long = this.city.lng;
+
 
                     // useful to save the JSON stringified, so that the method will wait that all the variables are setted
                     // in this way, before using the fields it should be parsed with JSON.parse()

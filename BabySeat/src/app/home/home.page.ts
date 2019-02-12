@@ -29,6 +29,7 @@ export class HomePage implements OnInit {
     stopProgres = false;
     isAutista = false;
     isAngelo = false;
+    loggedUser;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
@@ -40,21 +41,16 @@ export class HomePage implements OnInit {
                 private bleSer: BleService,
                 private geolocationService: GeolocationService) {
 
-        if (constDb.USER_OBJ !== null) {
-            if (JSON.parse(this.constDb.USER_OBJ).ruolo === this.constDb.AUTISTA) {
-                this.isAutista = true;
-                this.isAngelo = false;
-            } else {
-                this.isAutista = false;
-                this.isAngelo = true;
-            }
+        this.instialState();
+        if (this.constDb.USER_OBJ !== null) {
+
         } else {
 
-            router.navigate(['/login']);
+            this.router.navigate(['/login']);
         }
 
         this.platform.ready().then((rdy) => {
-            this.checkThreshold(this.threshold);
+            // this.checkThreshold(this.threshold);
             this.bleSer.checkBluetoothSignal();
             this.getRole();
         });
@@ -70,11 +66,12 @@ export class HomePage implements OnInit {
 
     ngOnInit(): void {
         this.instialState();
+        this.getRole();
     }
 
     checkThreshold(threshold: number): void {
         if (threshold <= 3) {
-            console.log('Check');
+            // console.log('Check');
             document.getElementById('send').click();
         }
     }
@@ -118,11 +115,29 @@ export class HomePage implements OnInit {
         this.authService.logoutUser();
     }
 
+    getRole() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    const role = us.get('ruolo');
+                    this.checkRole(role);
+                } , error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+    }
+
     checkRole(role: string) {
         console.log(role + '-----');
         if (role === this.constDb.AUTISTA ) {
             this.isAutista = true;
             this.isAngelo = false;
+            console.log(this.isAutista + '---->' + 'Autista' );
             this.geolocationService.getPositionOnDevice(false);
             this.geolocationService.getBackGroundPosition(role);
         } else {
