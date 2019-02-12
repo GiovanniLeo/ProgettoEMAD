@@ -101,6 +101,7 @@ export class HomePage implements OnInit {
                 this.value = this.value + progres;
             } else {
                 clearInterval(intervalId);
+                this.sendNotificationToAngels();
 
             }
         }, 1000);
