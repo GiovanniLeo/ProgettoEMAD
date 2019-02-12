@@ -41,47 +41,21 @@ export class HomePage implements OnInit {
                 private geolocationService: GeolocationService) {
 
         if (constDb.USER_OBJ !== null) {
-console.log(constDb.USER_OBJ);
-            this.checkRole(JSON.parse(constDb.USER_OBJ).ruolo);
+            if (JSON.parse(this.constDb.USER_OBJ).ruolo === this.constDb.AUTISTA) {
+                this.isAutista = true;
+                this.isAngelo = false;
+            } else {
+                this.isAutista = false;
+                this.isAngelo = true;
+            }
         } else {
+
             router.navigate(['/login']);
         }
-            /*
-        this.auth.authState.subscribe(user => {
-            if (!user) {
-                router.navigate(['/login']);
-            } else {
-                if (this.userObj === null) {
-                    console.log(user.uid);
-                    // getting the user info, if it's logged
-                    this.firestore.doc<any>('users/' + user.uid).get().subscribe(userObj => {
-                        const userJson = {
-                            uid: user.uid,
-                            nome: userObj.get('nome'),
-                            cognome: userObj.get('cognome'),
-                            email: userObj.get('email'),
-                            ruolo: userObj.get('ruolo'),
-                        };
 
-                        this.checkRole(userJson.ruolo);
-
-                        // useful to save the JSON stringified, so that the method will wait that all the variables are setted
-                        // in this way, before using the fields it should be parsed with JSON.parse()
-                        this.userObj = JSON.stringify(userJson);
-                        console.log(userObj);
-                    }, error => {
-                        this.userObj = null;
-                    });
-                }
-            }
-        }, (error) => {
-            console.log(error.message);
-            this.router.navigate(['/login']);
-        });
-
-*/
         this.platform.ready().then((rdy) => {
             this.checkThreshold(this.threshold);
+            // this.checkRole(JSON.parse(constDb.USER_OBJ).ruolo);
             // this.bleSer.checkBluetoothSignal();
             // t his.getRole();
         });
@@ -101,7 +75,6 @@ console.log(constDb.USER_OBJ);
 
     sendNotification(type: string) {
 
-        console.log(this.constDb.USER_OBJ);
         if (this.constDb.USER_OBJ !== null) {
             const userJson = JSON.parse(this.constDb.USER_OBJ);
 
@@ -112,14 +85,15 @@ console.log(constDb.USER_OBJ);
             device.subscribe(tokenUser => {
                 const obj = {
                     token: tokenUser.get('token'),
+                    uid: userJson.uid,
                     nome: userJson.nome,
                     cognome: userJson.cognome
                 };
 
-                const jsonToken = JSON.stringify(obj);
+                const jsonUser = JSON.stringify(obj);
 
-                console.log(jsonToken);
-                this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/sendNotificationToAngels', jsonToken)
+                console.log(jsonUser);
+                this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/sendNotification', jsonUser)
                     .subscribe((data) => {
                         console.log('Notification sended, response: ' + data.toString());
                     }, error => {
@@ -193,6 +167,7 @@ console.log(constDb.USER_OBJ);
             this.isAutista = false;
         }
     }
+
 
 
 }

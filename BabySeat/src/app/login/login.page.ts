@@ -99,12 +99,12 @@ export class LoginPage implements OnInit {
                     console.log(this.constDb.USER_OBJ);
 
                     this.unespectedError = false;
+                    this.showError = false;
                     this.router.navigate(['/home']);
 
 
                   }, error => {
                     this.constDb.USER_OBJ = null;
-                    this.showError = true;
                     this.unespectedError = true;
                   });
                 }
@@ -112,6 +112,8 @@ export class LoginPage implements OnInit {
             }).catch(
         error => {
           console.log(error.message);
+          this.constDb.USER_OBJ = null;
+          this.showError = true;
         });
   }
 
