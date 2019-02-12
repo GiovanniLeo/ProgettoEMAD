@@ -9,7 +9,10 @@ import {BackgroundMode} from '@ionic-native/background-mode/ngx';
 import {AuthService} from '../services/authService/autb-service.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {AngularFirestore} from '@angular/fire/firestore';
-import {Firebase} from '@ionic-native/firebase';
+import {HttpClient} from '@angular/common/http';
+import {BleService} from '../services/bleService/ble.service';
+import {GeolocationService} from '../services/geolocationService/geolocation.service';
+
 
 
 
@@ -20,30 +23,36 @@ import {Firebase} from '@ionic-native/firebase';
 })
 export class HomePage implements OnInit {
     threshold = 2;
-    danger = true;
+    danger = false;
     timer: number;
     value: number;
     stopProgres = false;
+    isAutista = false;
+    isAngelo = false;
+    loggedUser;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
-                private firestore: AngularFirestore) {
+                private firestore: AngularFirestore,
+                private http: HttpClient,
+                private bleSer: BleService,
+                private geolocationService: GeolocationService) {
 
-        this.auth.authState.subscribe(user => {
-            if (!user) {
-                this.router.navigate(['/login']);
-            }
-        }, () => {
+        this.instialState();
+        if (this.constDb.USER_OBJ !== null) {
+
+        } else {
+
             this.router.navigate(['/login']);
-        });
-
+        }
 
         this.platform.ready().then((rdy) => {
-            this.localNotification.on('click');
-            this.checkThreshold(this.threshold);
+            // this.checkThreshold(this.threshold);
+            this.bleSer.checkBluetoothSignal();
+            this.getRole();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -53,33 +62,19 @@ export class HomePage implements OnInit {
             this.instialState();
         });
         this.value = 0.0;
-
-        if (this.backMode.isEnabled()) {
-            this.sendNotification('BackMode');
-        }
     }
 
     ngOnInit(): void {
         this.instialState();
-        console.log('Init');
-    }
-
-    sendNotification(message: string) {
-        this.auth.authState.subscribe(user => {
-            if (user) {
-                const device = this.firestore.collection('devices', ref => ref.where('userId', '==', user.email)).get();
-                console.log(device);
-            }
-        });
+        this.getRole();
     }
 
     checkThreshold(threshold: number): void {
         if (threshold <= 3) {
-            console.log('Check');
+            // console.log('Check');
             document.getElementById('send').click();
         }
     }
-
 
 
     instialState() {
@@ -95,13 +90,15 @@ export class HomePage implements OnInit {
         });
     }
 
-     startProgresBar() {
+    startProgresBar() {
         const progres = (100 / this.timer) / 100;
         const intervalId = setInterval(() => {
             if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
                 this.value = this.value + progres;
             } else {
                 clearInterval(intervalId);
+                this.sendNotificationToAngels();
+
             }
         }, 1000);
 
@@ -114,6 +111,66 @@ export class HomePage implements OnInit {
     }
 
     logout() {
+        this.constDb.USER_OBJ = null;
         this.authService.logoutUser();
     }
+
+    getRole() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    const role = us.get('ruolo');
+                    this.checkRole(role);
+                } , error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+    }
+
+    checkRole(role: string) {
+        console.log(role + '-----');
+        if (role === this.constDb.AUTISTA ) {
+            this.isAutista = true;
+            this.isAngelo = false;
+            console.log(this.isAutista + '---->' + 'Autista' );
+            this.geolocationService.getPositionOnDevice(false);
+            this.geolocationService.getBackGroundPosition(role);
+        } else {
+            this.isAngelo = true;
+            this.isAutista = false;
+        }
+    }
+
+    sendNotificationToAngels() {
+
+        if (this.constDb.USER_OBJ !== null) {
+            const userJson = JSON.parse(this.constDb.USER_OBJ);
+            const obj = {
+                uid: userJson.uid,
+                nome: userJson.nome,
+                cognome: userJson.cognome,
+                lat: 'lat',
+                long: 'long'
+            };
+            const jsonUser = JSON.stringify(obj);
+
+            console.log('jsonuser in home.page: ' + jsonUser);
+            this.http.post('https://us-central1-babysafeseat-6b42d.cloudfunctions.net/sendNotificationToAngels', jsonUser)
+                .subscribe((data) => {
+                    console.log('Notification to angels sended, response: ' + data.toString());
+                }, error => {
+                    console.log(error.message);
+                });
+
+        } else {
+            console.log('Cannot send notification');
+        }
+
+    }
+
 }

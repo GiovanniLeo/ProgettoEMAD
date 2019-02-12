@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "babysafeseat-6b42d",
+  "private_key_id": "479bb89b569efe5f158c8b6fa6e5dd64c84a974d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDwCWzqDV3b1rib\nnBlO7+1lsfhhkVyODzrQ3Bwu3BBFksefP/qqw01Bu6PF9Y1r387nJoOhtN5mJCHX\nbo7LejsR8GvV+Znc1WJSmhUQeKm8QKhK4YFvgJSAcc2vQ4c0yr4PRuHitEEZQpO0\npIT0eUcJAr008yj6Qug8R5RKKDvYHJGLtIZjBGG56ZGmQS4bpErnFHNUb5Vf9ElJ\nJsZMvQYow4BYaQX/MoE7eBdc4yRvRehORQRMBNO6zY3WVHUnyCw875ySHctmSzYu\nsGM7E+eIrNnKb8Jq0boMJNJ4VZ8s5son0HlLJZmxiXRg3Cj4759DkGBDwOE4Yf7G\nGRAGNnbZAgMBAAECggEABWOwyYogFzvKbqczH5qZ4N8wwMAPCt9ezNTonAS8Wu0l\njTKajJwMXmrKyX8Q2hREWg97UNwGwk3wlJQaobxF50G+IY4t7jXNXtCeTcqBXrgo\nID2/8jwo1SZBhETRejPVRwOZeoFUyAzx1A4XMEHCb5yOiFJaJGI0uf9bCLwD2/bS\ncSQV6BSQD9iu162AyMX3GDGKVoatIHF35R9QVBT3og35VmhWByUj0wwYSC2QEnEQ\n1ZBl1dGyYJ8uJqB3GlyO0vtYnl98vtHhy0ssoBQW9+CfS9vT135+dAwoVvxnlnQQ\nD1FlJvf8patc5GrofTHYD7EDrYU0bLgj1y28HLzwIQKBgQD/jRy4HQpqj3FyC1k6\nYGfnJHYWMlnTo9lNKllU/1m+4QWKw/X4yhZMUtt3w8tvR4kkeHSUBhb3FdsVmLHt\nAcIgFKrQnqmPUDustc7gj3QytUU/1g5C/7WiX4JLIuclGC6wCYod6Q9DuUayZF69\nfXoWcNkgEEhA7FjBJriBah3RowKBgQDwdVamNPAa9PyqiaJIAPN7XsMJzHOUJNQJ\nWxD4pRQKlPx258JyttUUNwf0rs8DAMEc3visbl99+BeFDkaafhdgxDzXEJIgW+PR\n92nUOKD8Uvcxt55TUsOm9asLSXi+/RKkhoAJBH+rdqKgEHlRk6RQDG2MWx+VSq9r\nBXKKvxR1UwKBgQDO4S8RwbjQAWYGvDc08hzLW5IZcBOWKPve41zEWaAOzd4Ns4xq\nJzeb/Cvdre0AHjphAv7lYnSu/MuKlT3dL+I21GRgVUHRWlOlAt4Cnz+jWWpBPon3\nJUmmtIknSI81UXliW6arhiQsYE5iVqz33B+9EQhFU8kafftwCmetpPmU3wKBgElT\nbt32TLXbuWUD3ZHZgGZBqnZFe4VUibhkpdM8+9SSRD66Q+iZanbkpS9vUz9WLo1w\nTSK/8azHR9zSUqNwCg7/KJJowjbN7rYrnYES17y6TBlEJirAlVtHlSY2/HQ5VkMH\npOmbDpep8MOg4m4G+NdUQt/HNeVfxgh7u8clp8ZzAoGBAMyd581bOVYLQSrh2Wua\ncgyQBZdopZeAqWk9Aa6vZZjDTLJ/zSmUGHuK65EL0WaV2s8ACTP1zaLzb49iYaa0\nBUFG3crt/vbeyzdEJyVx1kofG6FrLDynFivUJ7eJGknO3wfzYX4uJSqwTav3fyTk\noZPZFRhgS67+d+Muze4+avpx\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-eacpq@babysafeseat-6b42d.iam.gserviceaccount.com",
+  "client_id": "116162196754975198031",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-eacpq%40babysafeseat-6b42d.iam.gserviceaccount.com"
+}
