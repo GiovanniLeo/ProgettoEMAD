@@ -138,7 +138,7 @@ export class HomePage implements OnInit {
             this.isAutista = true;
             this.isAngelo = false;
             console.log(this.isAutista + '---->' + 'Autista' );
-            this.geolocationService.getPositionOnDevice(false);
+            this.geolocationService.getPositionOnDevice(true);
             this.geolocationService.getBackGroundPosition(role);
         } else {
             this.isAngelo = true;

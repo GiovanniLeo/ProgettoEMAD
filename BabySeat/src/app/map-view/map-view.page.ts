@@ -3,6 +3,7 @@ import { Map, latLng, tileLayer, Layer, marker, L, leaflet } from 'leaflet';
 import {Platform} from '@ionic/angular';
 import {Clipboard} from '@ionic-native/clipboard/ngx';
 import {ToastService} from '../services/toastService/toast.service';
+import {ConstantDbService} from '../services/constantDbService/constant-db.service';
 
 
 
@@ -18,7 +19,10 @@ export class MapViewPage implements OnInit {
   lat: number;
   log: number;
 
-  constructor(private platform: Platform, private clipboard: Clipboard, private toastService: ToastService) {
+  constructor(private platform: Platform,
+              private clipboard: Clipboard,
+              private toastService: ToastService,
+              private constDb: ConstantDbService) {
   }
 
   loadmap(lat: number, log: number) {
@@ -26,7 +30,7 @@ export class MapViewPage implements OnInit {
       this.map = new Map('map').setView([lat, log], 8);
       tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         // tslint:disable-next-line
-        maxZoom: 18
+        maxZoom: 24
       }).addTo(this.map);
       // this.layer.marker([40.6642, 14.8046]).addTo(this.map);
       const marker2 = new marker([lat, log]).addTo(this.map);
@@ -42,8 +46,8 @@ export class MapViewPage implements OnInit {
   }
 
   setCoordinates() {
-    this.lat = 40.6642;
-    this.log = 14.8046;
+    this.lat = this.constDb.lat;
+    this.log = this.constDb.long;
   }
   copyCoordsClipsboard() {
     const msgTocpy = this.lat + ' ' + this.log;
