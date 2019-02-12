@@ -3,7 +3,7 @@ const cors = require('cors')({ origin: true });
 const admin = require('firebase-admin');
 admin.initializeApp();
 const firestore = admin.firestore();
-
+/*
 exports.sendNotificationToAngels = functions.https.onRequest((request, response) => {
 
     cors(request, response, () => {
@@ -18,8 +18,6 @@ exports.sendNotificationToAngels = functions.https.onRequest((request, response)
         console.log('Richiesta pervenuta da autista: ' + uid);
 
         // Notification content
-        // inviare coordinate ad angeli
-
         const payload = {
             notification: {
                 title: 'Serve il tuo aiuto!',
@@ -85,6 +83,7 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
         // Notification content
         const payload = {
             notification: {
+
                 title: 'Bambino dimenticato!',
                 body: `Hey! Torna in auto! Se non disattivi l'allarme e torni in auto, saranno avvisati gli angeli associati!`,
                 icon: 'https://goo.gl/Fz9nrQ'
@@ -108,3 +107,4 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
 
 });
 
+*/

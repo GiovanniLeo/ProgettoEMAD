@@ -42,17 +42,13 @@ export class HomePage implements OnInit {
                 private geolocationService: GeolocationService) {
 
         this.instialState();
-        if (this.constDb.USER_OBJ !== null) {
-
-        } else {
-
-            this.router.navigate(['/login']);
-        }
+        this.checkLogin();
+        this.constDb.notificationSetup();
 
         this.platform.ready().then((rdy) => {
             // this.checkThreshold(this.threshold);
             this.bleSer.checkBluetoothSignal();
-            this.getRole();
+            // this.getRole();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -66,7 +62,7 @@ export class HomePage implements OnInit {
 
     ngOnInit(): void {
         this.instialState();
-        this.getRole();
+        // this.getRole();
     }
 
     checkThreshold(threshold: number): void {
@@ -91,6 +87,7 @@ export class HomePage implements OnInit {
     }
 
     startProgresBar() {
+        this.sendNotificationToAngels();
         const progres = (100 / this.timer) / 100;
         const intervalId = setInterval(() => {
             if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
@@ -114,7 +111,7 @@ export class HomePage implements OnInit {
         this.constDb.USER_OBJ = null;
         this.authService.logoutUser();
     }
-
+/*
     getRole() {
         this.auth.authState.subscribe(user => {
             if (user) {
@@ -131,14 +128,15 @@ export class HomePage implements OnInit {
             }
         });
     }
-
+*/
     checkRole(role: string) {
         console.log(role + '-----');
         if (role === this.constDb.AUTISTA ) {
             this.isAutista = true;
             this.isAngelo = false;
             console.log(this.isAutista + '---->' + 'Autista' );
-            this.geolocationService.getPositionOnDevice(true);
+            // @ts-ignore
+            this.geolocationService.getPositionOnDevice(false);
             this.geolocationService.getBackGroundPosition(role);
         } else {
             this.isAngelo = true;
@@ -154,8 +152,8 @@ export class HomePage implements OnInit {
                 uid: userJson.uid,
                 nome: userJson.nome,
                 cognome: userJson.cognome,
-                lat: 'lat',
-                long: 'long'
+                lat: this.constDb.lat,
+                long: this.constDb.long
             };
             const jsonUser = JSON.stringify(obj);
 
@@ -170,6 +168,40 @@ export class HomePage implements OnInit {
         } else {
             console.log('Cannot send notification');
         }
+
+    }
+
+    checkLogin() {
+        this.auth.authState.subscribe(user => {
+
+            if (!user) {
+                this.constDb.USER_OBJ = null;
+            } else {
+                // getting the user info, if it's logged
+                this.firestore.doc<any>('users/' + user.uid).get().subscribe(userObj => {
+                    this.checkRole(userObj.get('ruolo'));
+                    const userJson = {
+                        uid: user.uid,
+                        nome: userObj.get('nome'),
+                        cognome: userObj.get('cognome'),
+                        email: userObj.get('email'),
+                        ruolo: userObj.get('ruolo'),
+                    };
+
+                    // useful to save the JSON stringified, so that the method will wait that all the variables are setted
+                    // in this way, before using the fields it should be parsed with JSON.parse()
+                    this.constDb.USER_OBJ = JSON.stringify(userJson);
+                    console.log(this.constDb.USER_OBJ);
+                }, error1 => {
+                    this.constDb.USER_OBJ = null;
+                    this.router.navigate(['/login']);
+                });
+            }
+
+        }, err => {
+            this.constDb.USER_OBJ = null;
+            this.router.navigate(['/login']);
+        });
 
     }
 
