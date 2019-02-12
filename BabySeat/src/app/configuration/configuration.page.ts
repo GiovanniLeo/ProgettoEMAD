@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import {Router} from '@angular/router';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import {ConstantDbService} from '../services/constantDbService/constant-db.service';
 
 @Component({
@@ -12,14 +11,11 @@ import {ConstantDbService} from '../services/constantDbService/constant-db.servi
 })
 export class ConfigurationPage implements OnInit {
 
-  minGeolocationRange = 1; // minuti
+
   maxGeolocationRange = 20; // minuti
-  minBluetoothAllarm = 1; // threshold(Dipende dal bluetooth)
-  maxBluetoothAllarm = 5; // threshold(Dipende dal bluetooth)
-  minRangeAllarmDeactivation = 30; // secondi
+  maxBluetoothAllarm = -80; // threshold(Dipende dal bluetooth)
   maxRangeAllarmDeactivation = 120; // secondi
-  minBluetoothPowerGeolocation = 1;
-  maxBluetoothPowerGeolocation = 5;
+  maxBluetoothPowerGeolocation = -80;
 
   userGeolocation: number; // minuti
   userBluetoothAllarm: number; // threshold(Dipende dal bluetooth)
@@ -28,7 +24,7 @@ export class ConfigurationPage implements OnInit {
 
   geolocationRangeMessage = 'Indicare la frenquenza (in minuti) di invio della posizione al server.';
   bluetoothAllarmMessage = 'Indicare la soglia sotta la quale si attiva la seganalazione di pericolo.';
-  rangeAllarmDeactivationMessage = 'Indicare il tempo entro il quale disattivare la segnalazione sonora.';
+  rangeAllarmDeactivationMessage = 'Indicare il tempo (in secondi) entro il quale disattivare la segnalazione sonora.';
   bluetoothPowerGeolocationMessage = 'Indicare la soglia sopra la quala si avvia la comunicazione della posizione al server.';
 
 
@@ -66,7 +62,7 @@ export class ConfigurationPage implements OnInit {
       if (val !== null && val !== undefined) {
         this.userGeolocation = val;
       } else {
-        this.userGeolocation = this.minGeolocationRange;
+        this.userGeolocation = this.constDb.minGeolocationRange;
       }
     });
 
@@ -74,7 +70,7 @@ export class ConfigurationPage implements OnInit {
       if (val !== null && val !== undefined) {
         this.userBluetoothAllarm = val;
       } else {
-        this.userBluetoothAllarm = this.minBluetoothAllarm;
+        this.userBluetoothAllarm = this.constDb.minBluetoothAllarm;
       }
     });
 
@@ -82,7 +78,7 @@ export class ConfigurationPage implements OnInit {
       if (val !== null && val !== undefined) {
         this.userAllarmDeactivation = val;
       } else {
-        this.userAllarmDeactivation = this.minRangeAllarmDeactivation;
+        this.userAllarmDeactivation = this.constDb.minRangeAllarmDeactivation;
       }
     });
 
@@ -90,7 +86,7 @@ export class ConfigurationPage implements OnInit {
       if (val !== null && val !== undefined) {
         this.UserBluetoothPowerGeolocation = val;
       } else {
-        this.UserBluetoothPowerGeolocation = this.minBluetoothPowerGeolocation;
+        this.UserBluetoothPowerGeolocation = this.constDb.minBluetoothPowerGeolocation;
       }
     });
   }

@@ -59,7 +59,7 @@ export class LoginPage implements OnInit {
     }
     this.platform.ready().then((rdy) => {
       this.permissionService.requestGPSpermission();
-      this.geolocationService.getPositionOnDevice();
+      this.geolocationService.getPositionOnDevice(false);
     });
   }
 
@@ -68,7 +68,7 @@ export class LoginPage implements OnInit {
     if (this.webFlag) {
       this.getPositionOnWeb(false);
     }
-    this.geolocationService.getPositionOnDevice();
+    this.geolocationService.getPositionOnDevice(true);
 
     this.auth.loginUser(this.logForm.value.email, this.logForm.value.password)
         .then(
