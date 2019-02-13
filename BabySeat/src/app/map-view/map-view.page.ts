@@ -23,6 +23,7 @@ export class MapViewPage implements OnInit {
               private clipboard: Clipboard,
               private toastService: ToastService,
               private constDb: ConstantDbService) {
+    this.setCoordinates();
   }
 
   loadmap(lat: number, log: number) {

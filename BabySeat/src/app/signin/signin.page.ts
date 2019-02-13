@@ -116,8 +116,6 @@ export class SigninPage implements OnInit {
                     // in this way, before using the fields it should be parsed with JSON.parse()
                     this.constDb.USER_OBJ = JSON.stringify(userJson);
                     console.log(this.constDb.USER_OBJ);
-
-                    this.constDb.notificationSetup();
                     this.showError = false;
                     this.router.navigate(['/registration-succes']);
                 }
