@@ -11,11 +11,15 @@ import {ConstantDbService} from '../services/constantDbService/constant-db.servi
 })
 export class ConfigurationPage implements OnInit {
 
+  minGeolocationRange = 1; // minuti
+  minBluetoothAllarm = 74; // threshold(Dipende dal bluetooth)
+  minRangeAllarmDeactivation = 30; // secondi
+  minBluetoothPowerGeolocation =  74; // soglia bluetooth
 
   maxGeolocationRange = 20; // minuti
-  maxBluetoothAllarm = -80; // threshold(Dipende dal bluetooth)
+  maxBluetoothAllarm = 80; // threshold(Dipende dal bluetooth)
   maxRangeAllarmDeactivation = 120; // secondi
-  maxBluetoothPowerGeolocation = -80;
+  maxBluetoothPowerGeolocation = 80;
 
   userGeolocation: number; // minuti
   userBluetoothAllarm: number; // threshold(Dipende dal bluetooth)
@@ -48,6 +52,9 @@ export class ConfigurationPage implements OnInit {
 
   saveTodb() {
 
+    this.userBluetoothAllarm =   this.userBluetoothAllarm * -1;
+    this.UserBluetoothPowerGeolocation  = this.UserBluetoothPowerGeolocation * -1;
+
     this.storage.set(this.constDb.GEO_RANGE, this.userGeolocation);
     this.storage.set(this.constDb.BLU_ALLARM, this.userBluetoothAllarm);
     this.storage.set(this.constDb.ALLARM_DEACT, this.userAllarmDeactivation);
@@ -62,15 +69,15 @@ export class ConfigurationPage implements OnInit {
       if (val !== null && val !== undefined) {
         this.userGeolocation = val;
       } else {
-        this.userGeolocation = this.constDb.minGeolocationRange;
+        this.userGeolocation = this.minGeolocationRange;
       }
     });
 
     this.storage.get(this.constDb.BLU_ALLARM).then((val) => {
       if (val !== null && val !== undefined) {
-        this.userBluetoothAllarm = val;
+        this.userBluetoothAllarm = val * -1;
       } else {
-        this.userBluetoothAllarm = this.constDb.minBluetoothAllarm;
+        this.userBluetoothAllarm = this.minBluetoothAllarm;
       }
     });
 
@@ -78,15 +85,16 @@ export class ConfigurationPage implements OnInit {
       if (val !== null && val !== undefined) {
         this.userAllarmDeactivation = val;
       } else {
-        this.userAllarmDeactivation = this.constDb.minRangeAllarmDeactivation;
+        console.log(this.constDb.minRangeAllarmDeactivation);
+        this.userAllarmDeactivation = this.minRangeAllarmDeactivation;
       }
     });
 
     this.storage.get(this.constDb.BLUE_GEO).then((val) => {
       if (val !== null && val !== undefined) {
-        this.UserBluetoothPowerGeolocation = val;
+        this.UserBluetoothPowerGeolocation = val * -1;
       } else {
-        this.UserBluetoothPowerGeolocation = this.constDb.minBluetoothPowerGeolocation;
+        this.UserBluetoothPowerGeolocation = this.minBluetoothPowerGeolocation;
       }
     });
   }
