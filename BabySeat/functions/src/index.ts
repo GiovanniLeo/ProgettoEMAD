@@ -18,11 +18,9 @@ exports.sendNotificationToAngels = functions.https.onRequest((request, response)
         console.log('Richiesta pervenuta da autista: ' + uid);
 
         // Notification content
-        // inviare coordinate ad angeli
-
         const payload = {
             notification: {
-                title: 'Serve il tuo aiuto!',
+                title: 'angels:' + lat + ':' + long,
                 body: `Hey! ` + nome + ` ` + cognome + ` ` + ` sta dimenticando un bambino! Corri in aiuto!`,
                 icon: 'https://goo.gl/Fz9nrQ'
             }
@@ -85,7 +83,7 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
         // Notification content
         const payload = {
             notification: {
-                title: 'Bambino dimenticato!',
+                title: 'autista',
                 body: `Hey! Torna in auto! Se non disattivi l'allarme e torni in auto, saranno avvisati gli angeli associati!`,
                 icon: 'https://goo.gl/Fz9nrQ'
             }
@@ -108,3 +106,31 @@ exports.sendNotification = functions.https.onRequest((request, response) => {
 
 });
 
+exports.sendNotificationUserAdded = functions.https.onRequest((request, response) => {
+    cors(request, response, () => {
+
+        // Notification content
+        const payload = {
+            notification: {
+                title: 'help',
+                body: `Hey! Un autista ti ha associato come suo angelo! Sii pronto per correre in aiuto!`,
+                icon: 'https://goo.gl/Fz9nrQ'
+            }
+        };
+
+        const token = JSON.parse(request.body).token;
+
+        console.log(token);
+
+
+        // on click notific
+        const stat = admin.messaging().sendToDevice((token === undefined) ? [] : token, payload);
+
+        const objStatus = {
+            status: stat
+        };
+
+        response.status(200).send(JSON.stringify(objStatus));
+    });
+
+});

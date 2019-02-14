@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
+import {LocalNotifications} from '@ionic-native/local-notifications/ngx';
+import {Platform} from '@ionic/angular';
+import {FcmService} from '../fcmService/fcm.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConstantDbService {
 
-  constructor() { }
+  constructor(private localNotification: LocalNotifications,
+              private platform: Platform) { }
 
   GEO_RANGE = 'userGeolocation';
   BLU_ALLARM = 'userBluetoothAllarm';
@@ -21,4 +25,6 @@ export class ConstantDbService {
   USER_OBJ = null;
   lat = 0 ;
   long = 0;
+
+
 }

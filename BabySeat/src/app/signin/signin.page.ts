@@ -116,8 +116,6 @@ export class SigninPage implements OnInit {
                     // in this way, before using the fields it should be parsed with JSON.parse()
                     this.constDb.USER_OBJ = JSON.stringify(userJson);
                     console.log(this.constDb.USER_OBJ);
-
-                    this.notificationSetup();
                     this.showError = false;
                     this.router.navigate(['/registration-succes']);
                 }
@@ -129,7 +127,7 @@ export class SigninPage implements OnInit {
 
         }
     }
-
+/*
     // listen for notification
     notificationSetup() {
         this.fcm.getToken();
@@ -161,5 +159,6 @@ export class SigninPage implements OnInit {
 
 
     }
+    */
 
 }
