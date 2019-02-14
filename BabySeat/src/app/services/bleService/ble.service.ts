@@ -4,6 +4,7 @@ import {ConstantDbService} from '../constantDbService/constant-db.service';
 import { Storage } from '@ionic/storage';
 import {HttpClient} from '@angular/common/http';
 import {AngularFirestore} from '@angular/fire/firestore';
+import {GeolocationService} from '../geolocationService/geolocation.service';
 
 
 @Injectable({
@@ -14,6 +15,7 @@ export class BleService {
     bleId;
     bluetopthThreshold;
     bluetopthMaxThreshold;
+    bluetopthDangerThreshold;
     bluetoothTimer;
     count = 0;
 
@@ -23,7 +25,8 @@ export class BleService {
         private constDb: ConstantDbService,
         private ngZone: NgZone,
         private http: HttpClient,
-        private firestore: AngularFirestore) { }
+        private firestore: AngularFirestore,
+        private gelocationService: GeolocationService) { }
 
     checkBluetoothSignal() {
         this.bluetoothTimer = 60 * 1000;
@@ -41,16 +44,21 @@ export class BleService {
                                 RSSI = this.ble.readRSSI(this.bleId).then(
                                     (rssi) => {
                                         RSSI = rssi;
-                                        if (RSSI != null && RSSI > this.bluetopthThreshold && RSSI < this.bluetopthMaxThreshold) {
-                                            console.log('Ok---' + RSSI);
-                                        } else {
-                                            if (this.count > 1) {
-                                                console.log('error--' + RSSI);
-                                                this.sendNotification();
-                                                this.count = 0;
+                                        if (RSSI != null ) {
+                                            RSSI = RSSI * -1;
+                                            this.bluetopthThreshold = this.bluetopthThreshold * -1;
+                                            this.bluetopthMaxThreshold =  this.bluetopthMaxThreshold * -1;
+                                            if (RSSI > this.bluetopthThreshold && RSSI < this.bluetopthMaxThreshold) {
+                                                console.log('Ok checkB--->' + RSSI);
+                                            } else {
+                                                if (this.count > 1) {
+                                                    console.log('error--' + RSSI);
+                                                    this.sendNotification();
+                                                    this.count = 0;
+                                                }
+                                                this.count++;
+                                                console.log('Count-->' + this.count);
                                             }
-                                            this.count++;
-                                            console.log('Count-->' + this.count);
                                         }
                                     });
                             } else {
@@ -62,7 +70,39 @@ export class BleService {
             });
     }
 
+    checkBluetoothSignalForPosition(role: string) {
+        this.bluetopthDangerThreshold = -77;
+        this.ngZone.run(
+            () => {
+                const intervalId = setInterval(() => {
+                    this.checkThreshold();
+                    console.log('bluetopthDangerThreshold' + '-->' + this.bluetopthDangerThreshold);
+                    this.storage.get(this.constDb.BLE_DEVICE).then((val) => {
+                        let RSSI = null;
+                        if (val !== null && val !== undefined) {
+                            this.bleId = val;
+                            if (this.ble.isConnected(this.bleId)) {
+                                RSSI = this.ble.readRSSI(this.bleId).then(
+                                    (rssi) => {
+                                        RSSI = rssi;
+                                        if (RSSI != null ) {
+                                            RSSI = RSSI * -1;
+                                            console.log('bluetopthDangerThreshold--RSSI' + '-->' + RSSI);
+                                            this.bluetopthDangerThreshold = this.bluetopthDangerThreshold * -1;
+                                            if (RSSI > this.bluetopthDangerThreshold) {
+                                                 this.gelocationService.getBackGroundPosition(role);
+                                            }
+                                        }
+                                    });
+                            } else {
+                                console.log('erro');
+                            }
+                        }
+                    });
+                }, this.bluetoothTimer);
+            });
 
+    }
     checkThreshold() {
         this.storage.get(this.constDb.BLU_ALLARM).then((val) => {
             if (val !== null && val !== undefined) {
@@ -71,8 +111,15 @@ export class BleService {
                 this.bluetopthThreshold = this.constDb.minGeolocationRange;
             }
         });
+        this.storage.get(this.constDb.BLUE_GEO).then((val) => {
+            if (val !== null && val !== undefined) {
+                this.bluetopthDangerThreshold = val;
+            } else {
+                this.bluetopthDangerThreshold = this.constDb.minBluetoothPowerGeolocation;
+            }
+        });
     }
- sendNotification() {
+    sendNotification() {
         if (this.constDb.USER_OBJ !== null) {
             const userJson = JSON.parse(this.constDb.USER_OBJ);
 

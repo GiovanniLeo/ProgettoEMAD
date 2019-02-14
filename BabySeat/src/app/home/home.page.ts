@@ -50,7 +50,7 @@ export class HomePage implements OnInit {
         this.platform.ready().then((rdy) => {
             // this.checkThreshold(this.threshold);
             this.bleSer.checkBluetoothSignal();
-            // this.getRole();
+            this.getRole();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -64,7 +64,7 @@ export class HomePage implements OnInit {
 
     ngOnInit(): void {
         this.instialState();
-        // this.getRole();
+        this.getRole();
     }
 
     checkThreshold(threshold: number): void {
@@ -114,6 +114,23 @@ export class HomePage implements OnInit {
         this.authService.logoutUser();
     }
 
+    getRole() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    const role = us.get('ruolo');
+                    this.checkRole(role);
+                } , error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+    }
+
     checkRole(role: string) {
         console.log(role + '-----');
         if (role === this.constDb.AUTISTA ) {
@@ -121,8 +138,9 @@ export class HomePage implements OnInit {
             this.isAngelo = false;
             console.log(this.isAutista + '---->' + 'Autista' );
             // @ts-ignore
-            this.geolocationService.getPositionOnDevice(false);
-            this.geolocationService.getBackGroundPosition(role);
+            this.geolocationService.getPositionOnDevice(true);
+            this.bleSer.checkBluetoothSignalForPosition(role);
+           // this.geolocationService.getBackGroundPosition(role);
         } else {
             this.isAngelo = true;
             this.isAutista = false;

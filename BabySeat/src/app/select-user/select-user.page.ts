@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {IonicSelectableComponent} from 'ionic-selectable';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {ConstantDbService} from '../services/constantDbService/constant-db.service';
+import {Router} from '@angular/router';
+import {forEach} from '@angular-devkit/schematics';
 
 @Component({
   selector: 'app-select-user',
@@ -11,11 +13,15 @@ import {ConstantDbService} from '../services/constantDbService/constant-db.servi
 export class SelectUserPage implements OnInit {
 
   users = [];
-  usersSelected = null;
+  usersSelected = [];
 
   constructor(private firestore: AngularFirestore,
-              private constDb: ConstantDbService) {
-    const coll = firestore.collection('users', ref => ref.where('ruolo', '==', 'Au')).valueChanges();
+              private constDb: ConstantDbService,
+              private router: Router) {
+    const coll = firestore.collection('users', ref => ref.where(
+        'ruolo', '==', this.constDb.ANGELO
+    )).valueChanges();
+
     coll.subscribe(angels => {
       this.users = angels;
     });
@@ -26,18 +32,21 @@ export class SelectUserPage implements OnInit {
 
   userChange(event: {component: IonicSelectableComponent, value: any}) {
     console.log('even', event);
+    console.log(this.usersSelected[0].uid);
   }
 
   addUser() {
     const thisUid = JSON.parse(this.constDb.USER_OBJ).uid;
-    const id = thisUid + this.usersSelected.uid;
 
-    // for each user selected do ->
-
-    this.firestore.doc('association/' + id).set({
-      uidAutista: JSON.parse(this.constDb.USER_OBJ).uid,
-      uidAngelo: this.usersSelected.uid
+    this.usersSelected.forEach( (user) => {
+      const id = thisUid + user.uid;
+      this.firestore.doc('association/' + id).set({
+        uidAutista: JSON.parse(this.constDb.USER_OBJ).uid,
+        uidAngelo: user.uid
+      });
     });
+
+    this.router.navigate(['/home']);
 
   }
 
