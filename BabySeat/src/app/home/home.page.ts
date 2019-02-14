@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import { LocalNotifications} from '@ionic-native/local-notifications/ngx';
 import {Platform} from '@ionic/angular';
 import {Storage} from '@ionic/storage';
@@ -41,7 +41,8 @@ export class HomePage implements OnInit {
                 private http: HttpClient,
                 private bleSer: BleService,
                 private geolocationService: GeolocationService,
-                private fcm: FcmService) {
+                private fcm: FcmService,
+                private ngZone: NgZone) {
 
         this.instialState();
         this.checkLogin();
@@ -89,18 +90,21 @@ export class HomePage implements OnInit {
     }
 
     startProgresBar() {
-        this.sendNotificationToAngels();
-        const progres = (100 / this.timer) / 100;
-        const intervalId = setInterval(() => {
-            if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
-                this.value = this.value + progres;
-            } else {
-                clearInterval(intervalId);
-                this.sendNotificationToAngels();
-
-            }
-        }, 1000);
-
+        this.ngZone.run(() => {
+            this.danger = true;
+            this.sendNotificationToAngels();
+            const progres = (100 / this.timer) / 100;
+            const intervalId = setInterval(() => {
+                if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
+                    this.value = this.value + progres;
+                } else {
+                    clearInterval(intervalId);
+                    this.sendNotificationToAngels();
+                    this.sendLocalNotificatio();
+                    this.stopProgress();
+                }
+            }, 1000);
+        });
     }
 
     stopProgress() {
@@ -140,7 +144,7 @@ export class HomePage implements OnInit {
             // @ts-ignore
             this.geolocationService.getPositionOnDevice(true);
             this.bleSer.checkBluetoothSignalForPosition(role);
-           // this.geolocationService.getBackGroundPosition(role);
+            // this.geolocationService.getBackGroundPosition(role);
         } else {
             this.isAngelo = true;
             this.isAutista = false;
@@ -241,7 +245,7 @@ export class HomePage implements OnInit {
                     });
                 }
 
-                if (msg.title === 'angels' && this.constDb.USER_OBJ.ruolo === 'An') {
+                if (msg.title === 'angels' && this.constDb.USER_OBJ.ruolo === this.constDb.ANGELO) {
                     console.log('apri mappa con coordinate');
                     const mes = msg.title.split(':');
 
@@ -262,6 +266,15 @@ export class HomePage implements OnInit {
             });
 
 
+    }
+    sendLocalNotificatio() {
+        const text = 'Hey ' + this.constDb.USER_OBJ.nome + this.constDb.USER_OBJ.cognome + ', sono stati avvisati gli angeli!';
+         this.localNotification.schedule(
+            {
+                id: 1,
+                title: text,
+            }
+        );
     }
 
 }
