@@ -62,6 +62,7 @@ export class BleService {
                                                         this.sendNotification();
                                                         this.count = 0;
                                                     }
+                                                    this.gelocationService.getPositionOnDevice(true);
                                                     this.count++;
                                                     console.log('Count-->' + this.count);
                                                 }

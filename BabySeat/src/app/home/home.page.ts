@@ -53,8 +53,8 @@ export class HomePage implements OnInit {
         this.platform.ready().then((rdy) => {
             // this.checkThreshold(this.threshold);
             this.bleSer.checkBluetoothSignal();
-            this.getRole();
-           // this.backMode.enable();
+            this.getRole(false);
+            // this.backMode.enable();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -68,7 +68,7 @@ export class HomePage implements OnInit {
 
     ngOnInit(): void {
         this.instialState();
-        this.getRole();
+        this.getRole(false);
     }
 
     checkThreshold(threshold: number): void {
@@ -122,7 +122,7 @@ export class HomePage implements OnInit {
         this.authService.logoutUser();
     }
 
-    getRole() {
+    getRole(onNotification: boolean, msg?) {
         this.auth.authState.subscribe(user => {
             if (user) {
                 console.log('uid: ' + user.uid);
@@ -132,6 +132,9 @@ export class HomePage implements OnInit {
                     // console.log(us);
                     const role = us.get('ruolo');
                     this.checkRole(role);
+                    if (onNotification === true) {
+                        this.onNotificationAngel(msg, role);
+                    }
                 } , error1 => {
                     console.log(error1.message);
                 });
@@ -156,7 +159,7 @@ export class HomePage implements OnInit {
     }
 
     sendNotificationToAngels() {
-
+        this.geolocationService.getPositionOnDevice(true);
         if (this.constDb.USER_OBJ !== null) {
             const userJson = JSON.parse(this.constDb.USER_OBJ);
             const obj = {
@@ -226,8 +229,10 @@ export class HomePage implements OnInit {
                 let title = 'Notification received';
 
                 console.log('todo: -> ' + msg.title);
-                if (msg.title === 'angels') {
+                const titleMSG = msg.title + '';
+                if (titleMSG.startsWith('angels')) {
                     title = 'Hey! Qualcuno sta dimenticando un bambino!';
+                    console.log('HERE');
                 } else if (msg.title === 'autista') {
                     title = ' Hey! Torna in auto a prendi il bambino!';
                 }
@@ -249,17 +254,10 @@ export class HomePage implements OnInit {
                     });
                 }
 
-                if (msg.title === 'angels' && this.constDb.USER_OBJ.ruolo === this.constDb.ANGELO) {
-                    console.log('apri mappa con coordinate');
-                    const mes = msg.title.split(':');
+                console.log('ruolo--> ' + this.constDb.USER_OBJ.ruolo);
 
-                    this.constDb.lat = mes[1];
-                    this.constDb.long = mes[2];
-
-                    this.showMessageToAngel = false;
-                    this.showMapToAngel = true;
-                    console.log('lat-> ' + this.constDb.lat + ' , long -> ' + this.constDb.long);
-                    this.router.navigate(['/map-view']);
+                if (titleMSG.startsWith('angels')) {
+                   this.getRole(true, msg);
                 } else if (msg.title === 'autista') {
                     console.log('Children need help!');
                     this.router.navigate(['/home']);
@@ -289,6 +287,22 @@ export class HomePage implements OnInit {
     resetList() {
         this.showMessageToAngel = true;
         this.showMapToAngel = false;
+    }
+
+    onNotificationAngel(msg, role) {
+        this.ngZone.run(() => {
+            if (role === this.constDb.ANGELO) {
+                console.log('apri mappa con coordinate');
+                const mes = msg.title.split(':');
+                this.constDb.lat = mes[1];
+                this.constDb.long = mes[2];
+                this.showMessageToAngel = false;
+                this.showMapToAngel = true;
+                console.log('lat-> ' + this.constDb.lat + ' , long -> ' + this.constDb.long);
+                this.router.navigate(['/map-view']);
+            }
+
+        });
     }
 
 }
