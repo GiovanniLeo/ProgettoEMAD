@@ -31,6 +31,8 @@ export class HomePage implements OnInit {
     isAutista = false;
     isAngelo = false;
     loggedUser;
+    showMapToAngel = false;
+    showMessageToAngel = true;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
@@ -52,6 +54,7 @@ export class HomePage implements OnInit {
             // this.checkThreshold(this.threshold);
             this.bleSer.checkBluetoothSignal();
             this.getRole();
+           // this.backMode.enable();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -92,6 +95,7 @@ export class HomePage implements OnInit {
     startProgresBar() {
         this.ngZone.run(() => {
             this.danger = true;
+            this.stopProgres = false;
             this.sendNotificationToAngels();
             const progres = (100 / this.timer) / 100;
             const intervalId = setInterval(() => {
@@ -102,7 +106,6 @@ export class HomePage implements OnInit {
                     this.sendNotificationToAngels();
                     this.sendLocalNotificatio();
                     this.stopProgress();
-                    this.value = 0;
                 }
             }, 1000);
         });
@@ -223,7 +226,7 @@ export class HomePage implements OnInit {
                 let title = 'Notification received';
 
                 console.log('todo: -> ' + msg.title);
-                if (msg.title.startsWith('angels')) {
+                if (msg.title === 'angels') {
                     title = 'Hey! Qualcuno sta dimenticando un bambino!';
                 } else if (msg.title === 'autista') {
                     title = ' Hey! Torna in auto a prendi il bambino!';
@@ -253,6 +256,8 @@ export class HomePage implements OnInit {
                     this.constDb.lat = mes[1];
                     this.constDb.long = mes[2];
 
+                    this.showMessageToAngel = false;
+                    this.showMapToAngel = true;
                     console.log('lat-> ' + this.constDb.lat + ' , long -> ' + this.constDb.long);
                     this.router.navigate(['/map-view']);
                 } else if (msg.title === 'autista') {
@@ -270,7 +275,7 @@ export class HomePage implements OnInit {
     }
     sendLocalNotificatio() {
         const text = 'Hey, sono stati avvisati gli angeli!';
-         this.localNotification.schedule(
+        this.localNotification.schedule(
             {
                 id: 1,
                 title: text,
@@ -279,6 +284,11 @@ export class HomePage implements OnInit {
     }
     enableBluetooth() {
         this.bleSer.enableBle();
+    }
+
+    resetList() {
+        this.showMessageToAngel = true;
+        this.showMapToAngel = false;
     }
 
 }

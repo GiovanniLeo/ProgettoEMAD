@@ -22,7 +22,7 @@
             <ion-label>Configurazione</ion-label>
             <ion-button slot="end" routerLink="/configuration">Vai</ion-button>
         </ion-item>
-        <ion-item *ngIf="isAngelo">
+        <ion-item *ngIf="isAngelo && showMapToAngel">
             <ion-label>Mappa</ion-label>
             <ion-button slot="end" routerLink="/map-view">Vai</ion-button>
         </ion-item>
@@ -35,9 +35,20 @@
             <ion-button slot="end" routerLink="/selectUser">Vai</ion-button>
         </ion-item>
     </ion-list>
-<!--
-    <ion-button (click)="startProgresBar()" >Start P</ion-button>
-    <ion-button (click)="stopProgress()" >Stop P</ion-button>
--->
+    <ion-row *ngIf="isAngelo && showMessageToAngel" justify-content-center>
+        <ion-label style="text-align: center">Tranquillo! Nessuno ha bisogno del tuo aiuto!</ion-label>
+    </ion-row>
+
+    <!--
+        <ion-button (click)="startProgresBar()" >Start P</ion-button>
+       -->
+    <ion-row *ngIf="danger" justify-content-center>
+        <ion-button style="margin-top: 5%" (click)="stopProgress()" >Disattiva Allarme</ion-button>
+    </ion-row>
+    <ion-row *ngIf="isAutista && showMapToAngel" justify-content-center="">
+        <ion-button (click)="resetList()" >Conferma salvataggio</ion-button>
+    </ion-row>
+
+
 
 </ion-content>
