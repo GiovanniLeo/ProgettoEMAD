@@ -5,6 +5,8 @@ import { Storage } from '@ionic/storage';
 import {HttpClient} from '@angular/common/http';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {GeolocationService} from '../geolocationService/geolocation.service';
+import {Router} from '@angular/router';
+import {ToastService} from '../toastService/toast.service';
 
 
 @Injectable({
@@ -26,7 +28,9 @@ export class BleService {
         private ngZone: NgZone,
         private http: HttpClient,
         private firestore: AngularFirestore,
-        private gelocationService: GeolocationService) { }
+        private gelocationService: GeolocationService,
+        private router: Router,
+        private toastSer: ToastService) { }
 
     checkBluetoothSignal() {
         this.bluetoothTimer = 60 * 1000;
@@ -90,7 +94,7 @@ export class BleService {
                                             console.log('bluetopthDangerThreshold--RSSI' + '-->' + RSSI);
                                             this.bluetopthDangerThreshold = this.bluetopthDangerThreshold * -1;
                                             if (RSSI > this.bluetopthDangerThreshold) {
-                                                 this.gelocationService.getBackGroundPosition(role);
+                                                this.gelocationService.getBackGroundPosition(role);
                                             }
                                         }
                                     });
@@ -149,6 +153,27 @@ export class BleService {
         } else {
             console.log('Cannot send notification');
         }
+    }
+
+    enableBle() {
+        this.ble.isEnabled().then(
+            () => {
+                // on success
+                this.router.navigate(['/ble-connet']);
+            },
+            () => {
+                // on failure
+                this.ble.enable().then(() => {
+                    // on succes
+                    this.router.navigate(['/ble-connet']);
+                }, () => {
+                    // on failure
+                    const msg = 'Per connetterti ad un dispositivo devi attivare il bluetooth';
+                    this.toastSer.presentToastWithOptions(msg);
+                });
+            }
+        );
+
     }
 }
 

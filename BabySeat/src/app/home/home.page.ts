@@ -276,5 +276,8 @@ export class HomePage implements OnInit {
             }
         );
     }
+    enableBluetooth() {
+        this.bleSer.enableBle();
+    }
 
 }

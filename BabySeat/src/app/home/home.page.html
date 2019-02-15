@@ -28,7 +28,7 @@
         </ion-item>
         <ion-item *ngIf="isAutista">
             <ion-label>Connessione Bluetooth</ion-label>
-            <ion-button slot="end" routerLink="/ble-connet">Vai</ion-button>
+            <ion-button slot="end"  (click)="enableBluetooth()">Vai</ion-button>
         </ion-item>
         <ion-item *ngIf="isAutista">
             <ion-label>Associa utenti</ion-label>
