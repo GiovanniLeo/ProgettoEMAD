@@ -102,6 +102,7 @@ export class HomePage implements OnInit {
                     this.sendNotificationToAngels();
                     this.sendLocalNotificatio();
                     this.stopProgress();
+                    this.value = 0;
                 }
             }, 1000);
         });
@@ -268,7 +269,7 @@ export class HomePage implements OnInit {
 
     }
     sendLocalNotificatio() {
-        const text = 'Hey ' + this.constDb.USER_OBJ.nome + this.constDb.USER_OBJ.cognome + ', sono stati avvisati gli angeli!';
+        const text = 'Hey, sono stati avvisati gli angeli!';
          this.localNotification.schedule(
             {
                 id: 1,

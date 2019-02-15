@@ -44,30 +44,33 @@ export class BleService {
                         let RSSI = null;
                         if (val !== null && val !== undefined) {
                             this.bleId = val;
-                            if (this.ble.isConnected(this.bleId)) {
-                                RSSI = this.ble.readRSSI(this.bleId).then(
-                                    (rssi) => {
-                                        RSSI = rssi;
-                                        if (RSSI != null ) {
-                                            RSSI = RSSI * -1;
-                                            this.bluetopthThreshold = this.bluetopthThreshold * -1;
-                                            this.bluetopthMaxThreshold =  this.bluetopthMaxThreshold * -1;
-                                            if (RSSI > this.bluetopthThreshold && RSSI < this.bluetopthMaxThreshold) {
-                                                console.log('Ok checkB--->' + RSSI);
-                                            } else {
-                                                if (this.count > 1) {
-                                                    console.log('error--' + RSSI);
-                                                    this.sendNotification();
-                                                    this.count = 0;
+                            this.ble.isConnected(this.bleId).then(
+                                () => {
+                                    // on success
+                                    RSSI = this.ble.readRSSI(this.bleId).then(
+                                        (rssi) => {
+                                            RSSI = rssi;
+                                            if (RSSI != null ) {
+                                                RSSI = RSSI * -1;
+                                                this.bluetopthThreshold = this.bluetopthThreshold * -1;
+                                                this.bluetopthMaxThreshold =  this.bluetopthMaxThreshold * -1;
+                                                if (RSSI > this.bluetopthThreshold && RSSI < this.bluetopthMaxThreshold) {
+                                                    console.log('Ok checkB--->' + RSSI);
+                                                } else {
+                                                    if (this.count >= 1) {
+                                                        console.log('error--' + RSSI);
+                                                        this.sendNotification();
+                                                        this.count = 0;
+                                                    }
+                                                    this.count++;
+                                                    console.log('Count-->' + this.count);
                                                 }
-                                                this.count++;
-                                                console.log('Count-->' + this.count);
                                             }
-                                        }
-                                    });
-                            } else {
-                                console.log('erro');
-                            }
+                                        });
+                                }, () => {
+                                    // on failure
+                                    console.log('erro');
+                                });
                         }
                     });
                 }, this.bluetoothTimer);
@@ -85,22 +88,26 @@ export class BleService {
                         let RSSI = null;
                         if (val !== null && val !== undefined) {
                             this.bleId = val;
-                            if (this.ble.isConnected(this.bleId)) {
-                                RSSI = this.ble.readRSSI(this.bleId).then(
-                                    (rssi) => {
-                                        RSSI = rssi;
-                                        if (RSSI != null ) {
-                                            RSSI = RSSI * -1;
-                                            console.log('bluetopthDangerThreshold--RSSI' + '-->' + RSSI);
-                                            this.bluetopthDangerThreshold = this.bluetopthDangerThreshold * -1;
-                                            if (RSSI > this.bluetopthDangerThreshold) {
-                                                this.gelocationService.getBackGroundPosition(role);
+                            this.ble.isConnected(this.bleId).then(
+                                () => {
+                                    // on succes
+                                    RSSI = this.ble.readRSSI(this.bleId).then(
+                                        (rssi) => {
+                                            RSSI = rssi;
+                                            if (RSSI != null ) {
+                                                RSSI = RSSI * -1;
+                                                console.log('bluetopthDangerThreshold--RSSI' + '-->' + RSSI);
+                                                this.bluetopthDangerThreshold = this.bluetopthDangerThreshold * -1;
+                                                if (RSSI > this.bluetopthDangerThreshold) {
+                                                    this.gelocationService.getBackGroundPosition(role);
+                                                }
                                             }
-                                        }
-                                    });
-                            } else {
-                                console.log('erro');
-                            }
+                                        });
+                                },
+                                () => {
+                                    console.log('erro');
+                                }
+                            );
                         }
                     });
                 }, this.bluetoothTimer);

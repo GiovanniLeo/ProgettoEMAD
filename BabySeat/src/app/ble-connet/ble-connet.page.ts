@@ -3,6 +3,8 @@ import {BLE} from '@ionic-native/ble/ngx';
 import {ToastService} from '../services/toastService/toast.service';
 import { Storage } from '@ionic/storage';
 import {ConstantDbService} from '../services/constantDbService/constant-db.service';
+import {Router} from '@angular/router';
+import {delay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-ble-connet',
@@ -19,13 +21,14 @@ export class BleConnetPage implements OnInit {
               private ngZone: NgZone,
               private toastService: ToastService,
               private storage: Storage,
-              private constDb: ConstantDbService) {}
+              private constDb: ConstantDbService,
+              private router: Router) {}
 
   ngOnInit() {
   }
 
   scan() {
-    this.setStatus('Scanning for Bluetooth LE Devices');
+    this.setStatus('Scansione device Bluetooth LE ');
     this.devices = [];  // clear list
 
     this.ble.scan([], 5).subscribe(
@@ -33,7 +36,7 @@ export class BleConnetPage implements OnInit {
         error => this.scanError(error)
     );
 
-    setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
+    setTimeout(this.setStatus.bind(this), 5000, 'Scansione completetata');
   }
 
   onDeviceDiscovered(device) {
@@ -47,7 +50,7 @@ export class BleConnetPage implements OnInit {
   // If location permission is denied, you'll end up here
   scanError(error) {
     this.setStatus('Error ' + error);
-    this.toastService.presentToastTimeout('Error scanning for Bluetooth low energy devices',
+    this.toastService.presentToastTimeout('Errore durante la scansione dei device Bluetooth low energy ',
         'middle');
   }
 
@@ -70,13 +73,29 @@ export class BleConnetPage implements OnInit {
 
     this.peripheral = peripheral;
     this.setStatus('Connected to ' + (peripheral.name || peripheral.id));
-    this.storage.set(this.constDb.BLE_DEVICE, this.peripheral.id);
-    this.ble.readRSSI(this.peripheral.id).then(
-        (rssi) => {
-          console.log('RSSI: ' + rssi );
-          this.setStatus('RSSI: ' + rssi );
+    this.ble.isConnected(this.peripheral.id).then(
+        () => {
+          // on success
+          this.storage.set(this.constDb.BLE_DEVICE, this.peripheral.id);
+          this.ble.readRSSI(this.peripheral.id).then(
+              (rssi) => {
+                console.log('RSSI: ' + rssi );
+                // this.setStatus('RSSI: ' + rssi );
+              }
+          );
+          this.setStatus('Connesso a ' + this.peripheral.name);
+
+          setTimeout(() => {
+                 this.router.navigate(['/home']);
+              },
+              3000);
+        },
+        () => {
+          // on failure
+          this.setStatus('Prova a riconnetterti a ' + this.peripheral.name);
         }
     );
+
 
   }
 
