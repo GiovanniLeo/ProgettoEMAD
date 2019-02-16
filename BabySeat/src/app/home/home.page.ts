@@ -98,7 +98,7 @@ export class HomePage implements OnInit {
         this.ngZone.run(() => {
             this.danger = true;
             this.stopProgres = false;
-            this.sendNotificationToAngels();
+            // this.sendNotificationToAngels();
             const progres = (100 / this.timer) / 100;
             const intervalId = setInterval(() => {
                 if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
@@ -297,6 +297,7 @@ export class HomePage implements OnInit {
     }
 
     onNotificationAngel(msg, role) {
+        console.log('QUi');
         this.ngZone.run(() => {
             if (role === this.constDb.ANGELO) {
                 console.log('apri mappa con coordinate');
@@ -307,6 +308,7 @@ export class HomePage implements OnInit {
                 this.showMapToAngel = true;
                 console.log('lat-> ' + this.constDb.lat + ' , long -> ' + this.constDb.long);
                 this.router.navigate(['/map-view']);
+                console.log('mappa');
             }
 
         });
