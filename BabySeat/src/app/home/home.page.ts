@@ -252,6 +252,7 @@ export class HomePage implements OnInit {
     }
 
     resetList() {
+        this.danger = false;
         this.showMessageToAngel = true;
         this.showMapToAngel = false;
         this.auth.authState.subscribe(user => {
@@ -323,6 +324,7 @@ export class HomePage implements OnInit {
                     // console.log(us);
                     const map = us.get('map');
                     if (map === true) {
+                        this.danger = true;
                         this.showMessageToAngel = false;
                         this.showMapToAngel = true;
                         this.constDb.lat  = us.get('lat');
