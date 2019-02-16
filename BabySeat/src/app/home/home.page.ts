@@ -103,10 +103,13 @@ export class HomePage implements OnInit {
             const intervalId = setInterval(() => {
                 if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
                     this.value = this.value + progres;
-                } else {
+                } else if (this.value >= 1 && !this.stopProgres &&  this.danger === true) {
                     clearInterval(intervalId);
                     this.sendNotificationToAngels();
                     this.sendLocalNotificatio();
+                    this.stopProgress();
+                } else {
+                    clearInterval(intervalId);
                     this.stopProgress();
                 }
             }, 1000);
@@ -165,7 +168,7 @@ export class HomePage implements OnInit {
     }
 
     sendNotificationToAngels() {
-       this.getCoordibates();
+        this.getCoordibates();
         if (this.constDb.USER_OBJ !== null) {
             const userJson = JSON.parse(this.constDb.USER_OBJ);
             const obj = {
@@ -234,7 +237,6 @@ export class HomePage implements OnInit {
         this.fcm.listenToNotifications().subscribe(
             (msg) => {
                 let title = 'Notification received';
-
                 console.log('todo: -> ' + msg.title);
                 const titleMSG = msg.title + '';
                 if (titleMSG.startsWith('angels')) {
@@ -264,7 +266,7 @@ export class HomePage implements OnInit {
                 console.log('ruolo--> ' + this.constDb.USER_OBJ.ruolo);
 
                 if (titleMSG.startsWith('angels')) {
-                   this.getRole(true, msg);
+                    this.getRole(true, msg);
                 } else if (msg.title === 'autista') {
                     console.log('Children need help!');
                     this.router.navigate(['/home']);
@@ -315,7 +317,7 @@ export class HomePage implements OnInit {
     }
 
     getCoordibates() {
-    this.auth.authState.subscribe(user => {
+        this.auth.authState.subscribe(user => {
             if (user) {
                 console.log('uid: ' + user.uid);
                 const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
@@ -328,6 +330,6 @@ export class HomePage implements OnInit {
                 });
             }
         });
-  }
+    }
 
 }
