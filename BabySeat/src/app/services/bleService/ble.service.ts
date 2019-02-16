@@ -34,7 +34,7 @@ export class BleService {
 
     checkBluetoothSignal() {
         this.bluetoothTimer = 20 * 1000;
-        this.bluetopthThreshold = -74;
+        this.bluetopthThreshold = -60;
         this.bluetopthMaxThreshold = -80;
         this.ngZone.run(
             () => {

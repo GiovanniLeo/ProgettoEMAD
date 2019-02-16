@@ -12,9 +12,9 @@ import {ConstantDbService} from '../services/constantDbService/constant-db.servi
 export class ConfigurationPage implements OnInit {
 
   minGeolocationRange = 1; // minuti
-  minBluetoothAllarm = 74; // threshold(Dipende dal bluetooth)
+  minBluetoothAllarm = 60; // threshold(Dipende dal bluetooth)
   minRangeAllarmDeactivation = 30; // secondi
-  minBluetoothPowerGeolocation =  74; // soglia bluetooth
+  minBluetoothPowerGeolocation =  60; // soglia bluetooth
 
   maxGeolocationRange = 20; // minuti
   maxBluetoothAllarm = 80; // threshold(Dipende dal bluetooth)
