@@ -34,8 +34,8 @@ export class BleService {
 
     checkBluetoothSignal() {
         this.bluetoothTimer = 20 * 1000;
-        this.bluetopthThreshold = -60;
-        this.bluetopthMaxThreshold = -80;
+        this.bluetopthThreshold = -54;
+        this.bluetopthMaxThreshold = -78;
         this.ngZone.run(
             () => {
                 const intervalId = setInterval(() => {
@@ -54,7 +54,9 @@ export class BleService {
                                                 RSSI = RSSI * -1;
                                                 this.bluetopthThreshold = this.bluetopthThreshold * -1;
                                                 this.bluetopthMaxThreshold =  this.bluetopthMaxThreshold * -1;
-                                                if (RSSI > this.bluetopthThreshold && RSSI < this.bluetopthMaxThreshold) {
+                                                console.log('min-> ' + this.bluetopthThreshold + ', max--> '
+                                                    + this.bluetopthMaxThreshold + ', RSSI -> ' + RSSI);
+                                                if (RSSI >= this.bluetopthThreshold && RSSI < this.bluetopthMaxThreshold) {
                                                     console.log('Ok checkB--->' + RSSI);
                                                 } else {
                                                     if (this.count >= 1) {

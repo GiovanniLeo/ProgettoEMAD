@@ -121,7 +121,11 @@ export class HomePage implements OnInit {
 
     logout() {
         this.constDb.USER_OBJ = null;
-        this.authService.logoutUser();
+        this.authService.logoutUser().then(
+            () => {
+                this.router.navigate(['/login']);
+            }
+        );
     }
 
     getRole(onNotification: boolean, msg?) {

@@ -19,9 +19,9 @@ export class ConstantDbService {
   AUTISTA = 'Au';
   ANGELO = 'An';
   minGeolocationRange = 1; // minuti
-  minBluetoothAllarm = -74; // threshold(Dipende dal bluetooth)
+  minBluetoothAllarm = -54; // threshold(Dipende dal bluetooth)
   minRangeAllarmDeactivation = 30; // secondi
-  minBluetoothPowerGeolocation =  -74; // soglia bluetooth
+  minBluetoothPowerGeolocation =  -54; // soglia bluetooth
   USER_OBJ = null;
   lat = 0 ;
   long = 0;
