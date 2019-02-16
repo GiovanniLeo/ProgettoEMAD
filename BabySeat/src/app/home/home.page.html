@@ -13,7 +13,7 @@
         </ng-template>
     </ion-row>
 
-    <ion-progress-bar *ngIf="this.danger" color="danger" style="margin-top: 8%" value="{{this.value}}">
+    <ion-progress-bar *ngIf="this.danger && isAutista" color="danger" style="margin-top: 8%" value="{{this.value}}">
     </ion-progress-bar>
 
     <ion-list>
@@ -41,7 +41,7 @@
     <!--
         <ion-button (click)="startProgresBar()" >Start P</ion-button>
        -->
-    <ion-row *ngIf="danger" justify-content-center>
+    <ion-row *ngIf="danger && isAutista" justify-content-center>
         <ion-button style="margin-top: 5%" (click)="stopProgress()" >Disattiva Allarme</ion-button>
     </ion-row>
     <ion-row *ngIf="isAngelo && showMapToAngel" justify-content-center="">

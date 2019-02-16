@@ -275,6 +275,7 @@ export class HomePage implements OnInit {
             this.showMessageToAngel = false;
             this.showMapToAngel = true;
             console.log('lat-> ' + this.constDb.lat + ' , long -> ' + this.constDb.long);
+            this.danger = true;
             this.router.navigate(['/map-view']);
             console.log('mappa');
         }
