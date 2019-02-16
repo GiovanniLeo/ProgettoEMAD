@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-
+import { LocalNotifications} from '@ionic-native/local-notifications/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -13,7 +13,6 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
-
 import {Clipboard} from '@ionic-native/clipboard/ngx';
 import {HttpClientModule} from '@angular/common/http';
 import {BLE} from '@ionic-native/ble/ngx';
@@ -52,6 +51,7 @@ const firebaseConfig = {
         Geolocation,
         BackgroundMode,
         Diagnostic,
+        LocalNotifications,
         LocationAccuracy,
         Clipboard,
         BLE,

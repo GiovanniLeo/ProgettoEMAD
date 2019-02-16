@@ -12,7 +12,7 @@ import {HttpClient} from '@angular/common/http';
 import {BleService} from '../services/bleService/ble.service';
 import {GeolocationService} from '../services/geolocationService/geolocation.service';
 import {FcmService} from '../services/fcmService/fcm.service';
-
+import { LocalNotifications} from '@ionic-native/local-notifications/ngx';
 
 
 
@@ -42,6 +42,7 @@ export class HomePage implements OnInit {
                 private firestore: AngularFirestore,
                 private http: HttpClient,
                 private bleSer: BleService,
+                private localNotification: LocalNotifications,
                 private geolocationService: GeolocationService,
                 private fcm: FcmService,
                 private ngZone: NgZone) {
@@ -226,10 +227,30 @@ export class HomePage implements OnInit {
 
         this.fcm.listenToNotifications().subscribe(
             (msg) => {
+                let title = 'Notification received';
                 console.log('todo: -> ' + msg.title);
                 const titleMSG = msg.title + '';
-
+                if (titleMSG.startsWith('angels')) {
+                    title = 'Hey! Qualcuno sta dimenticando un bambino!';
+                    console.log('HERE');
+                } else if (msg.title === 'autista') {
+                    title = ' Hey! Torna in auto a prendi il bambino, dopo il timer da te impostato verranno avvisati gli angeli!';
+                }
                 console.log('ruolo--> ' + this.constDb.USER_OBJ.ruolo);
+
+                if (this.platform.is('ios')) {
+                    this.localNotification.schedule({
+                        title: title,
+                        text: msg.aps.alert,
+                        sound: 'file://sound.mp3'
+                    });
+                } else {
+                    this.localNotification.schedule({
+                        title: title,
+                        text: msg.body,
+                        sound: 'file://beep.caf'
+                    });
+                }
 
                 if (titleMSG.startsWith('angels')) {
                     this.getRole(true, msg);
