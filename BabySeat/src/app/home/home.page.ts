@@ -33,6 +33,7 @@ export class HomePage implements OnInit {
     loggedUser;
     showMapToAngel = false;
     showMessageToAngel = true;
+    coords;
 
 
     constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
@@ -69,6 +70,7 @@ export class HomePage implements OnInit {
     ngOnInit(): void {
         this.instialState();
         this.getRole(false);
+        this.getCoordibates();
     }
 
     checkThreshold(threshold: number): void {
@@ -159,16 +161,17 @@ export class HomePage implements OnInit {
     }
 
     sendNotificationToAngels() {
-        this.geolocationService.getPositionOnDevice(true);
+       this.getCoordibates();
         if (this.constDb.USER_OBJ !== null) {
             const userJson = JSON.parse(this.constDb.USER_OBJ);
             const obj = {
                 uid: userJson.uid,
                 nome: userJson.nome,
                 cognome: userJson.cognome,
-                lat: this.constDb.lat,
-                long: this.constDb.long
+                lat: this.coords[0],
+                long: this.coords[1]
             };
+            console.log(obj);
             const jsonUser = JSON.stringify(obj);
 
             console.log('jsonuser in home.page: ' + jsonUser);
@@ -304,5 +307,21 @@ export class HomePage implements OnInit {
 
         });
     }
+
+    getCoordibates() {
+    this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    this.coords = [us.get('lat'), us.get('lng')];
+                } , error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+  }
 
 }

@@ -96,7 +96,8 @@ export class SigninPage implements OnInit {
                         'email': email,
                         'password': password,
                         'ruolo': ruolo,
-                        'citta': citta
+                        'lat': this.city.lat,
+                        'lng': this.city.lng
                     });
 
                     const userJson = {

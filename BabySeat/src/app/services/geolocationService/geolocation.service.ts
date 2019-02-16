@@ -66,8 +66,11 @@ export class GeolocationService {
   updateGeolocationOnDb() {
     this.auth.authState.subscribe(user => {
       if (user) {
-        this.constDb.lat = this.lat;
-        this.constDb.long = this.long;
+        console.log('uid: ' + user.uid);
+        const userDoc = this.firestore.doc<any>('users/' + user.uid).update( {
+          'lat' : this.lat,
+          'lng' : this.long
+        });
       }
     });
   }
@@ -97,5 +100,7 @@ export class GeolocationService {
       }
     });
   }
+
+
 
 }
