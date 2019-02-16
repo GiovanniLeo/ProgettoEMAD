@@ -33,7 +33,7 @@ export class BleService {
         private toastSer: ToastService) { }
 
     checkBluetoothSignal() {
-        this.bluetoothTimer = 60 * 1000;
+        this.bluetoothTimer = 20 * 1000;
         this.bluetopthThreshold = -74;
         this.bluetopthMaxThreshold = -80;
         this.ngZone.run(

@@ -27,6 +27,7 @@ export class SigninPage implements OnInit {
     cities: City[];
     showError = false;
     response: String;
+    errorMsg = 'Errore nella registrazione';
 
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
                 private http: HttpClient, private constDb: ConstantDbService,
@@ -76,12 +77,15 @@ export class SigninPage implements OnInit {
         if (nome === null || cognome === null || password === null ||
             confermaPassword === null || email === null || citta === null ||
             ruolo === null) {
+            this.errorMsg = 'Sembra che qualcosa è andato storto, prova a registrarti di nuovo!';
             this.showError = true;
             return;
         } else if (password.length < 6) {
+            this.errorMsg = 'La password deve essere composta da almeno 6 caratteri';
             this.showError = true;
             return;
         } else if (password !== confermaPassword) {
+            this.errorMsg = 'Le password non coincidono';
             this.showError = true;
             return;
         } else {
