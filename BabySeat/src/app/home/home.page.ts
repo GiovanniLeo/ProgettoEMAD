@@ -254,6 +254,13 @@ export class HomePage implements OnInit {
     resetList() {
         this.showMessageToAngel = true;
         this.showMapToAngel = false;
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).update({
+                    'map': false
+                });
+            }
+        });
     }
 
     onNotificationAngel(msg, role) {
@@ -297,7 +304,9 @@ export class HomePage implements OnInit {
             data.forEach((ang) => {
                 const uidAng = ang.get('uidAngelo');
                 const userDoc = this.firestore.doc<any>('users/' + uidAng).update({
-                    'map': true
+                    'map': true,
+                    'lat': this.coords[0],
+                    'lng': this.coords[1]
                 });
             });
         });
@@ -316,6 +325,8 @@ export class HomePage implements OnInit {
                     if (map === true) {
                         this.showMessageToAngel = false;
                         this.showMapToAngel = true;
+                        this.constDb.lat  = us.get('lat');
+                        this.constDb.long = us.get('lng');
                     }
                 } , error1 => {
                     console.log(error1.message);
