@@ -1,5 +1,4 @@
 import {Component, NgZone, OnInit} from '@angular/core';
-import { LocalNotifications} from '@ionic-native/local-notifications/ngx';
 import {Platform} from '@ionic/angular';
 import {Storage} from '@ionic/storage';
 import {ConstantDbService} from '../services/constantDbService/constant-db.service';
@@ -36,7 +35,7 @@ export class HomePage implements OnInit {
     coords;
 
 
-    constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
+    constructor(private  platform: Platform, private storage: Storage,
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
@@ -52,10 +51,9 @@ export class HomePage implements OnInit {
         this.notificationSetup();
 
         this.platform.ready().then((rdy) => {
-            // this.checkThreshold(this.threshold);
             this.bleSer.checkBluetoothSignal();
             this.getRole(false);
-            // this.backMode.enable();
+            this.checkFieldMap();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -71,15 +69,8 @@ export class HomePage implements OnInit {
         this.instialState();
         this.getRole(false);
         this.getCoordibates();
+        this.checkFieldMap();
     }
-
-    checkThreshold(threshold: number): void {
-        if (threshold <= 3) {
-            // console.log('Check');
-            document.getElementById('send').click();
-        }
-    }
-
 
     instialState() {
 
@@ -106,7 +97,6 @@ export class HomePage implements OnInit {
                 } else if (this.value >= 1 && !this.stopProgres &&  this.danger === true) {
                     clearInterval(intervalId);
                     this.sendNotificationToAngels();
-                    this.sendLocalNotificatio();
                     this.stopProgress();
                 } else {
                     clearInterval(intervalId);
@@ -157,18 +147,18 @@ export class HomePage implements OnInit {
             this.isAutista = true;
             this.isAngelo = false;
             console.log(this.isAutista + '---->' + 'Autista' );
-            // @ts-ignore
             this.geolocationService.getPositionOnDevice(true);
             this.bleSer.checkBluetoothSignalForPosition(role);
-            // this.geolocationService.getBackGroundPosition(role);
         } else {
             this.isAngelo = true;
             this.isAutista = false;
+
         }
     }
 
     sendNotificationToAngels() {
         this.getCoordibates();
+        this.updatefieldMap();
         if (this.constDb.USER_OBJ !== null) {
             const userJson = JSON.parse(this.constDb.USER_OBJ);
             const obj = {
@@ -236,32 +226,8 @@ export class HomePage implements OnInit {
 
         this.fcm.listenToNotifications().subscribe(
             (msg) => {
-                let title = 'Notification received';
                 console.log('todo: -> ' + msg.title);
                 const titleMSG = msg.title + '';
-                if (titleMSG.startsWith('angels')) {
-                    title = 'Hey! Qualcuno sta dimenticando un bambino!';
-                    console.log('HERE');
-                } else if (msg.title === 'autista') {
-                    title = ' Hey! Torna in auto a prendi il bambino!';
-                }
-
-                // deve aprirsi la mappa e settarsi le coordinate inviate, se la notifica è quella di bambino dimenticato
-                // da autista ad angelo.. se invece la notifica è per allontanamento bluetooth, deve partire la progress e aprirsi la home
-                // se invece un nuovo angelo si è associato, o hai associato un nuovo utente, si apre qualcosa..
-                if (this.platform.is('ios')) {
-                    this.localNotification.schedule({
-                        title: title,
-                        text: msg.aps.alert,
-                        sound: 'file://sound.mp3'
-                    });
-                } else {
-                    this.localNotification.schedule({
-                        title: title,
-                        text: msg.body,
-                        sound: 'file://beep.caf'
-                    });
-                }
 
                 console.log('ruolo--> ' + this.constDb.USER_OBJ.ruolo);
 
@@ -280,15 +246,7 @@ export class HomePage implements OnInit {
 
 
     }
-    sendLocalNotificatio() {
-        const text = 'Hey, sono stati avvisati gli angeli!';
-        this.localNotification.schedule(
-            {
-                id: 1,
-                title: text,
-            }
-        );
-    }
+
     enableBluetooth() {
         this.bleSer.enableBle();
     }
@@ -300,20 +258,19 @@ export class HomePage implements OnInit {
 
     onNotificationAngel(msg, role) {
         console.log('QUi');
-        this.ngZone.run(() => {
-            if (role === this.constDb.ANGELO) {
-                console.log('apri mappa con coordinate');
-                const mes = msg.title.split(':');
-                this.constDb.lat = mes[1];
-                this.constDb.long = mes[2];
-                this.showMessageToAngel = false;
-                this.showMapToAngel = true;
-                console.log('lat-> ' + this.constDb.lat + ' , long -> ' + this.constDb.long);
-                this.router.navigate(['/map-view']);
-                console.log('mappa');
-            }
 
-        });
+        if (role === this.constDb.ANGELO) {
+            console.log('apri mappa con coordinate');
+            const mes = msg.title.split(':');
+            this.constDb.lat = mes[1];
+            this.constDb.long = mes[2];
+            this.showMessageToAngel = false;
+            this.showMapToAngel = true;
+            console.log('lat-> ' + this.constDb.lat + ' , long -> ' + this.constDb.long);
+            this.router.navigate(['/map-view']);
+            console.log('mappa');
+        }
+
     }
 
     getCoordibates() {
@@ -331,5 +288,41 @@ export class HomePage implements OnInit {
             }
         });
     }
+
+    updatefieldMap() {
+        const userJson = JSON.parse(this.constDb.USER_OBJ);
+        const assosationDoc = this.firestore.collection('association',
+            ref => ref.where('uidAutista', '==', userJson.uid)).get();
+        assosationDoc.subscribe((data) => {
+            data.forEach((ang) => {
+                const uidAng = ang.get('uidAngelo');
+                const userDoc = this.firestore.doc<any>('users/' + uidAng).update({
+                    'map': true
+                });
+            });
+        });
+
+    }
+
+    checkFieldMap() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    const map = us.get('map');
+                    if (map === true) {
+                        this.showMessageToAngel = false;
+                        this.showMapToAngel = true;
+                    }
+                } , error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+    }
+
 
 }

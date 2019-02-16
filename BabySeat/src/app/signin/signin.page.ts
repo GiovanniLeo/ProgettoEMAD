@@ -13,8 +13,6 @@ import {Dialogs} from '@ionic-native/dialogs/ngx';
 import {AngularFirestore, AngularFirestoreCollection} from '@angular/fire/firestore';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {FcmService} from '../services/fcmService/fcm.service';
-import {ToastService} from '../services/toastService/toast.service';
-import {LocalNotifications} from '@ionic-native/local-notifications/ngx';
 
 @Component({
     selector: 'app-signin',
@@ -32,7 +30,6 @@ export class SigninPage implements OnInit {
     constructor(private cityService: CityService, private platform: Platform, private form: FormBuilder,
                 private http: HttpClient, private constDb: ConstantDbService,
                 private auth: AuthService, private router: Router, private dialogs: Dialogs, private firestore: AngularFirestore,
-                private localNotification: LocalNotifications,
                 private fcm: FcmService) {
         this.regForm = form.group({
             nome: ['', Validators.required],
@@ -101,7 +98,8 @@ export class SigninPage implements OnInit {
                         'password': password,
                         'ruolo': ruolo,
                         'lat': this.city.lat,
-                        'lng': this.city.lng
+                        'lng': this.city.lng,
+                        'map': false
                     });
 
                     const userJson = {
@@ -132,38 +130,4 @@ export class SigninPage implements OnInit {
 
         }
     }
-/*
-    // listen for notification
-    notificationSetup() {
-        this.fcm.getToken();
-        // aprire mappa con coordinate
-
-        this.fcm.listenToNotifications().subscribe(
-            (msg) => {
-                console.log('notification: ' + msg);
-                // deve aprirsi la mappa e settarsi le coordinate inviate, se la notifica è quella di bambino dimenticato
-                // da autista ad angelo.. se invece la notifica è per allontanamento bluetooth, deve partire la progress e aprirsi la home
-                // se invece un nuovo angelo si è associato, o hai associato un nuovo utente, si apre qualcosa..
-                if (this.platform.is('ios')) {
-                    this.localNotification.schedule({
-                        id: 1,
-                        title: 'Notification received',
-                        text: msg.aps.alert,
-                        sound: 'file://sound.mp3'
-                    });
-                } else {
-                    this.localNotification.schedule({
-                        id: 1,
-                        title: 'Notification received',
-                        text: msg.body,
-                        sound: 'file://beep.caf'
-                    });
-                }
-
-            });
-
-
-    }
-    */
-
 }

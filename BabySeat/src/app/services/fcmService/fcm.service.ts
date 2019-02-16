@@ -61,7 +61,6 @@ export class FcmService {
     }, (error) => {
       console.log(error.message);
     });
-
   }
 
   // Listen to incoming FCM messages
