@@ -45,7 +45,7 @@
                             <ion-radio value="0" ></ion-radio>
                         </ion-item >
                         <ion-item lines="none">
-                            <ion-label>Soccoritore</ion-label>
+                            <ion-label>Angelo</ion-label>
                             <ion-radio value="1"></ion-radio>
                         </ion-item>
                     </ion-row>
@@ -72,7 +72,7 @@
             </div>
         </ion-row>
         <ion-row  *ngIf="showError" justify-content-center style="margin-top: 3%">
-            <ion-label style="color: red; text-align: center; margin-left: 4%; margin-right: 4%">Errore nella registrazione</ion-label>
+            <ion-label style="color: red; text-align: center; margin-left: 4%; margin-right: 4%">{{errorMsg}}</ion-label>
         </ion-row>
 
 

@@ -1,6 +1,5 @@
 <ion-header>
     <ion-toolbar>
-        <ion-back-button defaultHref="/login" slot="start"></ion-back-button>
         <ion-title>Home</ion-title>
         <ion-icon slot="end" style="zoom:1.5;" (click)="logout()" name="log-out"></ion-icon>
     </ion-toolbar>
@@ -14,7 +13,7 @@
         </ng-template>
     </ion-row>
 
-    <ion-progress-bar *ngIf="this.danger" color="danger" style="margin-top: 8%" value="{{this.value}}">
+    <ion-progress-bar *ngIf="this.danger && isAutista" color="danger" style="margin-top: 8%" value="{{this.value}}">
     </ion-progress-bar>
 
     <ion-list>
@@ -22,22 +21,30 @@
             <ion-label>Configurazione</ion-label>
             <ion-button slot="end" routerLink="/configuration">Vai</ion-button>
         </ion-item>
-        <ion-item *ngIf="isAngelo">
+        <ion-item *ngIf="isAngelo && showMapToAngel">
             <ion-label>Mappa</ion-label>
             <ion-button slot="end" routerLink="/map-view">Vai</ion-button>
         </ion-item>
         <ion-item *ngIf="isAutista">
             <ion-label>Connessione Bluetooth</ion-label>
-            <ion-button slot="end" routerLink="/ble-connet">Vai</ion-button>
+            <ion-button slot="end"  (click)="enableBluetooth()">Vai</ion-button>
         </ion-item>
         <ion-item *ngIf="isAutista">
             <ion-label>Associa utenti</ion-label>
             <ion-button slot="end" routerLink="/selectUser">Vai</ion-button>
         </ion-item>
     </ion-list>
+    <ion-row *ngIf="isAngelo && showMessageToAngel" justify-content-center>
+        <ion-label style="text-align: center">Tranquillo! Nessuno ha bisogno del tuo aiuto!</ion-label>
+    </ion-row>
 
-    <ion-button (click)="startProgresBar()" >Start P</ion-button>
-    <ion-button (click)="stopProgress()" >Stop P</ion-button>
-
-
+    <!--
+        <ion-button (click)="startProgresBar()" >Start P</ion-button>
+       -->
+    <ion-row *ngIf="danger && isAutista" justify-content-center>
+        <ion-button style="margin-top: 5%" (click)="stopProgress()" >Disattiva Allarme</ion-button>
+    </ion-row>
+    <ion-row *ngIf="isAngelo && showMapToAngel" justify-content-center="">
+        <ion-button (click)="resetList()" >Conferma salvataggio</ion-button>
+    </ion-row>
 </ion-content>

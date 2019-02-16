@@ -1,5 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import { LocalNotifications} from '@ionic-native/local-notifications/ngx';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {Platform} from '@ionic/angular';
 import {Storage} from '@ionic/storage';
 import {ConstantDbService} from '../services/constantDbService/constant-db.service';
@@ -12,7 +11,8 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {HttpClient} from '@angular/common/http';
 import {BleService} from '../services/bleService/ble.service';
 import {GeolocationService} from '../services/geolocationService/geolocation.service';
-
+import {FcmService} from '../services/fcmService/fcm.service';
+import { LocalNotifications} from '@ionic-native/local-notifications/ngx';
 
 
 
@@ -30,29 +30,31 @@ export class HomePage implements OnInit {
     isAutista = false;
     isAngelo = false;
     loggedUser;
+    showMapToAngel = false;
+    showMessageToAngel = true;
+    coords;
 
 
-    constructor(private localNotification: LocalNotifications, private  platform: Platform, private storage: Storage,
+    constructor(private  platform: Platform, private storage: Storage,
                 private constDb:  ConstantDbService, private router: Router, private backMode: BackgroundMode,
                 private authService: AuthService,
                 private auth: AngularFireAuth,
                 private firestore: AngularFirestore,
                 private http: HttpClient,
                 private bleSer: BleService,
-                private geolocationService: GeolocationService) {
+                private localNotification: LocalNotifications,
+                private geolocationService: GeolocationService,
+                private fcm: FcmService,
+                private ngZone: NgZone) {
 
         this.instialState();
-        if (this.constDb.USER_OBJ !== null) {
-
-        } else {
-
-            this.router.navigate(['/login']);
-        }
+        this.checkLogin();
+        this.notificationSetup();
 
         this.platform.ready().then((rdy) => {
-            // this.checkThreshold(this.threshold);
             this.bleSer.checkBluetoothSignal();
-            this.getRole();
+            this.getRole(false);
+            this.checkFieldMap();
         });
 
         // Quando si indietro o vanti utilizzzando il routing di angual viene aggiornato il timer
@@ -66,16 +68,10 @@ export class HomePage implements OnInit {
 
     ngOnInit(): void {
         this.instialState();
-        this.getRole();
+        this.getRole(false);
+        this.getCoordibates();
+        this.checkFieldMap();
     }
-
-    checkThreshold(threshold: number): void {
-        if (threshold <= 3) {
-            // console.log('Check');
-            document.getElementById('send').click();
-        }
-    }
-
 
     instialState() {
 
@@ -91,17 +87,24 @@ export class HomePage implements OnInit {
     }
 
     startProgresBar() {
-        const progres = (100 / this.timer) / 100;
-        const intervalId = setInterval(() => {
-            if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
-                this.value = this.value + progres;
-            } else {
-                clearInterval(intervalId);
-                this.sendNotificationToAngels();
-
-            }
-        }, 1000);
-
+        this.ngZone.run(() => {
+            this.danger = true;
+            this.stopProgres = false;
+            // this.sendNotificationToAngels();
+            const progres = (100 / this.timer) / 100;
+            const intervalId = setInterval(() => {
+                if (this.value <= 1 && !this.stopProgres &&  this.danger === true) {
+                    this.value = this.value + progres;
+                } else if (this.value >= 1 && !this.stopProgres &&  this.danger === true) {
+                    clearInterval(intervalId);
+                    this.sendNotificationToAngels();
+                    this.stopProgress();
+                } else {
+                    clearInterval(intervalId);
+                    this.stopProgress();
+                }
+            }, 1000);
+        });
     }
 
     stopProgress() {
@@ -112,10 +115,14 @@ export class HomePage implements OnInit {
 
     logout() {
         this.constDb.USER_OBJ = null;
-        this.authService.logoutUser();
+        this.authService.logoutUser().then(
+            () => {
+                this.router.navigate(['/login']);
+            }
+        );
     }
 
-    getRole() {
+    getRole(onNotification: boolean, msg?) {
         this.auth.authState.subscribe(user => {
             if (user) {
                 console.log('uid: ' + user.uid);
@@ -125,6 +132,9 @@ export class HomePage implements OnInit {
                     // console.log(us);
                     const role = us.get('ruolo');
                     this.checkRole(role);
+                    if (onNotification === true) {
+                        this.onNotificationAngel(msg, role);
+                    }
                 } , error1 => {
                     console.log(error1.message);
                 });
@@ -138,25 +148,28 @@ export class HomePage implements OnInit {
             this.isAutista = true;
             this.isAngelo = false;
             console.log(this.isAutista + '---->' + 'Autista' );
-            this.geolocationService.getPositionOnDevice(false);
-            this.geolocationService.getBackGroundPosition(role);
+            this.geolocationService.getPositionOnDevice(true);
+            this.bleSer.checkBluetoothSignalForPosition(role);
         } else {
             this.isAngelo = true;
             this.isAutista = false;
+
         }
     }
 
     sendNotificationToAngels() {
-
+        this.getCoordibates();
+        this.updatefieldMap();
         if (this.constDb.USER_OBJ !== null) {
             const userJson = JSON.parse(this.constDb.USER_OBJ);
             const obj = {
                 uid: userJson.uid,
                 nome: userJson.nome,
                 cognome: userJson.cognome,
-                lat: 'lat',
-                long: 'long'
+                lat: this.coords[0],
+                long: this.coords[1]
             };
+            console.log(obj);
             const jsonUser = JSON.stringify(obj);
 
             console.log('jsonuser in home.page: ' + jsonUser);
@@ -172,5 +185,179 @@ export class HomePage implements OnInit {
         }
 
     }
+
+    checkLogin() {
+        this.auth.authState.subscribe(user => {
+
+            if (!user) {
+                this.constDb.USER_OBJ = null;
+            } else {
+                // getting the user info, if it's logged
+                this.firestore.doc<any>('users/' + user.uid).get().subscribe(userObj => {
+                    this.checkRole(userObj.get('ruolo'));
+                    const userJson = {
+                        uid: user.uid,
+                        nome: userObj.get('nome'),
+                        cognome: userObj.get('cognome'),
+                        email: userObj.get('email'),
+                        ruolo: userObj.get('ruolo'),
+                    };
+
+                    // useful to save the JSON stringified, so that the method will wait that all the variables are setted
+                    // in this way, before using the fields it should be parsed with JSON.parse()
+                    this.constDb.USER_OBJ = JSON.stringify(userJson);
+                    console.log(this.constDb.USER_OBJ);
+                }, error1 => {
+                    this.constDb.USER_OBJ = null;
+                    this.router.navigate(['/login']);
+                });
+            }
+
+        }, err => {
+            this.constDb.USER_OBJ = null;
+            this.router.navigate(['/login']);
+        });
+
+    }
+
+    // listen for notification
+    notificationSetup() {
+        this.fcm.getToken();
+        // aprire mappa con coordinate
+
+        this.fcm.listenToNotifications().subscribe(
+            (msg) => {
+                let title = 'Notification received';
+                console.log('todo: -> ' + msg.title);
+                const titleMSG = msg.title + '';
+                if (titleMSG.startsWith('angels')) {
+                    title = 'Hey! Qualcuno sta dimenticando un bambino!';
+                    console.log('HERE');
+                } else if (msg.title === 'autista') {
+                    title = ' Hey! Torna in auto a prendi il bambino, dopo il timer da te impostato verranno avvisati gli angeli!';
+                }
+                console.log('ruolo--> ' + this.constDb.USER_OBJ.ruolo);
+
+                if (this.platform.is('ios')) {
+                    this.localNotification.schedule({
+                        title: title,
+                        text: msg.aps.alert,
+                        sound: 'file://sound.mp3'
+                    });
+                } else {
+                    this.localNotification.schedule({
+                        title: title,
+                        text: msg.body,
+                        sound: 'file://beep.caf'
+                    });
+                }
+
+                if (titleMSG.startsWith('angels')) {
+                    this.getRole(true, msg);
+                } else if (msg.title === 'autista') {
+                    console.log('Children need help!');
+                    this.router.navigate(['/home']);
+                    this.startProgresBar();
+                } else if (msg.title === 'help') {
+                    console.log('user added');
+                }
+
+
+            });
+
+
+    }
+
+    enableBluetooth() {
+        this.bleSer.enableBle();
+    }
+
+    resetList() {
+        this.danger = false;
+        this.showMessageToAngel = true;
+        this.showMapToAngel = false;
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).update({
+                    'map': false
+                });
+            }
+        });
+    }
+
+    onNotificationAngel(msg, role) {
+        console.log('QUi');
+
+        if (role === this.constDb.ANGELO) {
+            console.log('apri mappa con coordinate');
+            const mes = msg.title.split(':');
+            this.constDb.lat = mes[1];
+            this.constDb.long = mes[2];
+            this.showMessageToAngel = false;
+            this.showMapToAngel = true;
+            console.log('lat-> ' + this.constDb.lat + ' , long -> ' + this.constDb.long);
+            this.danger = true;
+            this.router.navigate(['/map-view']);
+            console.log('mappa');
+        }
+
+    }
+
+    getCoordibates() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    this.coords = [us.get('lat'), us.get('lng')];
+                } , error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+    }
+
+    updatefieldMap() {
+        const userJson = JSON.parse(this.constDb.USER_OBJ);
+        const assosationDoc = this.firestore.collection('association',
+            ref => ref.where('uidAutista', '==', userJson.uid)).get();
+        assosationDoc.subscribe((data) => {
+            data.forEach((ang) => {
+                const uidAng = ang.get('uidAngelo');
+                const userDoc = this.firestore.doc<any>('users/' + uidAng).update({
+                    'map': true,
+                    'lat': this.coords[0],
+                    'lng': this.coords[1]
+                });
+            });
+        });
+
+    }
+
+    checkFieldMap() {
+        this.auth.authState.subscribe(user => {
+            if (user) {
+                console.log('uid: ' + user.uid);
+                const userDoc = this.firestore.doc<any>('users/' + user.uid).get();
+                // console.log(user.uid);
+                userDoc.subscribe( us => {
+                    // console.log(us);
+                    const map = us.get('map');
+                    if (map === true) {
+                        this.danger = true;
+                        this.showMessageToAngel = false;
+                        this.showMapToAngel = true;
+                        this.constDb.lat  = us.get('lat');
+                        this.constDb.long = us.get('lng');
+                    }
+                } , error1 => {
+                    console.log(error1.message);
+                });
+            }
+        });
+    }
+
 
 }
